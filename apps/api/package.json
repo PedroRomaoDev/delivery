@@ -15,5 +15,11 @@
     "packageManager": "pnpm@10.20.0",
     "dependencies": {
         "fastify": "5.5.0"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "7.27.2",
+        "babel-jest": "29.7.0",
+        "babel-plugin-transform-import-meta": "2.3.2",
+        "jest": "30.0.5"
     }
 }
