@@ -1,0 +1,14 @@
+{
+    "name": "@delivery/api",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "API for the delivery application",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.20.0"
+}
