@@ -7,13 +7,15 @@
     "scripts": {
         "dev": "node --watch api-server.js",
         "start": "node src/api-server.js",
-    "test": "jest --passWithNoTests --silent --runInBand --detectOpenHandles --forceExit"
+        "test": "jest --passWithNoTests --silent --runInBand --detectOpenHandles --forceExit"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "packageManager": "pnpm@10.20.0",
     "dependencies": {
+        "@fastify/swagger": "^9.7.0",
+        "@fastify/swagger-ui": "^5.2.5",
         "fastify": "5.5.0"
     },
     "devDependencies": {
