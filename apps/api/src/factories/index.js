@@ -1,1 +1,1 @@
-export { makeFindAllOrdersController } from './controllers/FindAllOrders.js';
+export * from './controllers/FindAllOrders.js';

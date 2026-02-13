@@ -1,21 +1,22 @@
 {
-  "name": "delivery",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@eslint/js": "9.19.0",
-    "eslint": "9.26.0",
-    "globals": "15.14.0",
-    "husky": "9.1.7",
-    "lint-staged": "15.3.0",
-    "prettier": "3.6.2"
-  }
+    "name": "delivery",
+    "version": "1.0.0",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "prepare": "husky"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@eslint/js": "9.19.0",
+        "eslint": "9.26.0",
+        "globals": "15.14.0",
+        "husky": "9.1.7",
+        "lint-staged": "15.3.0",
+        "prettier": "3.6.2"
+    }
 }

@@ -1,1 +1,3 @@
-export * from './FindAllOrdersRepository.js';
+import FindAllOrdersRepository from './FindAllOrdersRepository.js';
+
+export { FindAllOrdersRepository };

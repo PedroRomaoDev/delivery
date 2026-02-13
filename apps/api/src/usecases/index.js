@@ -1,1 +1,3 @@
-export * from './FindAllOrders.js';
+import FindAllOrdersUseCase from './FindAllOrders.js';
+
+export { FindAllOrdersUseCase };
