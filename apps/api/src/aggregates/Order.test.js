@@ -110,19 +110,23 @@ describe('Order Aggregate', () => {
             });
 
             const item = {
-                productId: 123,
+                code: 123,
                 quantity: 2,
                 price: 89.9,
                 observations: 'Sem cebola',
+                name: 'Camarão Alfredo',
             };
 
             const addedItem = order.addItem(item);
 
-            expect(addedItem.id).toBeDefined();
-            expect(addedItem.productId).toBe(123);
+            expect(addedItem.code).toBe(123);
             expect(addedItem.quantity).toBe(2);
             expect(addedItem.price).toBe(89.9);
             expect(addedItem.observations).toBe('Sem cebola');
+            expect(addedItem.name).toBe('Camarão Alfredo');
+            expect(addedItem.total_price).toBe(179.8);
+            expect(addedItem.discount).toBe(0);
+            expect(addedItem.condiments).toEqual([]);
             expect(order.items).toHaveLength(1);
         });
 
@@ -133,7 +137,7 @@ describe('Order Aggregate', () => {
             });
 
             const item = {
-                productId: 123,
+                code: 123,
                 quantity: 1,
                 price: 50.0,
             };
@@ -141,6 +145,7 @@ describe('Order Aggregate', () => {
             const addedItem = order.addItem(item);
 
             expect(addedItem.observations).toBeNull();
+            expect(addedItem.name).toBe('Product 123');
         });
 
         it('should throw error when adding item to non-DRAFT order', () => {
@@ -150,7 +155,7 @@ describe('Order Aggregate', () => {
             });
             order.status = 'RECEIVED'; // Simulando mudança de status
 
-            const item = { productId: 123, quantity: 1, price: 50.0 };
+            const item = { code: 123, quantity: 1, price: 50.0 };
 
             expect(() => order.addItem(item)).toThrow(
                 'Cannot add items to order that is not in DRAFT status',
@@ -163,8 +168,8 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
 
-            expect(() => order.addItem({ productId: 123 })).toThrow(
-                'Item must have productId, quantity and price',
+            expect(() => order.addItem({ code: 123 })).toThrow(
+                'Item must have code, quantity and price',
             );
         });
     });
@@ -311,8 +316,8 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
 
-            order.addItem({ productId: 1, quantity: 2, price: 50.0 });
-            order.addItem({ productId: 2, quantity: 1, price: 30.0 });
+            order.addItem({ code: 1, quantity: 2, price: 50.0 });
+            order.addItem({ code: 2, quantity: 1, price: 30.0 });
 
             expect(order.getTotalItems()).toBe(130.0);
         });
@@ -356,7 +361,7 @@ describe('Order Aggregate', () => {
                 name: 'João Silva',
                 phone: '11987654321',
             });
-            order.addItem({ productId: 1, quantity: 1, price: 50.0 });
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ method: 'PIX', value: 50.0 });
 
             expect(order.isComplete()).toBe(false);
@@ -367,7 +372,7 @@ describe('Order Aggregate', () => {
                 name: 'João Silva',
                 phone: '11987654321',
             });
-            order.addItem({ productId: 1, quantity: 1, price: 50.0 });
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
                 number: '1',
@@ -384,7 +389,7 @@ describe('Order Aggregate', () => {
                 name: 'João Silva',
                 phone: '11987654321',
             });
-            order.addItem({ productId: 1, quantity: 1, price: 50.0 });
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ method: 'PIX', value: 30.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
@@ -402,7 +407,7 @@ describe('Order Aggregate', () => {
                 name: 'João Silva',
                 phone: '11987654321',
             });
-            order.addItem({ productId: 1, quantity: 1, price: 50.0 });
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ method: 'PIX', value: 50.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
@@ -435,7 +440,7 @@ describe('Order Aggregate', () => {
                 name: 'João Silva',
                 phone: '11987654321',
             });
-            order.addItem({ productId: 1, quantity: 1, price: 50.0 });
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ method: 'PIX', value: 50.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
@@ -453,7 +458,7 @@ describe('Order Aggregate', () => {
                 name: 'João Silva',
                 phone: '11987654321',
             });
-            order.addItem({ productId: 1, quantity: 1, price: 50.0 });
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ method: 'PIX', value: 30.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
