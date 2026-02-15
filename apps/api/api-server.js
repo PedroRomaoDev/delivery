@@ -1,7 +1,10 @@
 import fastify from 'fastify';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
-import { makeFindAllOrdersController } from './src/factories/index.js';
+import {
+    makeFindAllOrdersController,
+    makeCreateOrderController,
+} from './src/factories/index.js';
 
 const app = fastify();
 
@@ -29,6 +32,7 @@ await app.register(fastifySwaggerUI, {
 
 // Orders routes
 const findAllOrdersController = makeFindAllOrdersController();
+const createOrderController = makeCreateOrderController();
 
 app.route({
     method: 'GET',
@@ -148,6 +152,84 @@ app.route({
     },
     handler: async (request, reply) => {
         return findAllOrdersController.execute(request, reply);
+    },
+});
+app.route({
+    method: 'POST',
+    url: '/orders',
+    schema: {
+        tags: ['Orders'],
+        summary: 'Criar novo pedido',
+        description: 'Cria um novo pedido no estado DRAFT',
+        body: {
+            type: 'object',
+            required: ['storeId', 'customer'],
+            properties: {
+                storeId: {
+                    type: 'string',
+                    description: 'ID da loja',
+                },
+                customer: {
+                    type: 'object',
+                    required: ['name', 'phone'],
+                    properties: {
+                        name: {
+                            type: 'string',
+                            description: 'Nome do cliente',
+                        },
+                        phone: {
+                            type: 'string',
+                            description: 'Telefone do cliente',
+                        },
+                    },
+                },
+            },
+        },
+        response: {
+            201: {
+                description: 'Pedido criado com sucesso',
+                type: 'object',
+                properties: {
+                    store_id: { type: 'string' },
+                    order_id: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            items: { type: 'array', items: {} },
+                            payments: { type: 'array', items: {} },
+                            delivery_address: { type: ['object', 'null'] },
+                            created_at: { type: 'number' },
+                            total_price: { type: 'number' },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Dados inválidos',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Erro interno do servidor',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return createOrderController.execute(request, reply);
     },
 });
 
