@@ -1,3 +1,4 @@
 import FindAllOrdersController from './FindAllOrders.js';
+import CreateOrderController from './CreateOrder.js';
 
-export { FindAllOrdersController };
+export { FindAllOrdersController, CreateOrderController };
