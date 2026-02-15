@@ -14,7 +14,10 @@ await app.register(fastifySwagger, {
         info: {
             title: 'Delivery API',
             description:
-                'API RESTful para gerenciamento de pedidos de delivery. Desenvolvida como parte do desafio técnico da CbLab, oferece endpoints para consulta, criação e atualização de pedidos.',
+                'API RESTful para gerenciamento de pedidos de delivery seguindo princípios de Domain-Driven Design (DDD) e Clean Architecture. ' +
+                'Os pedidos são construídos de forma incremental (como um carrinho de compras): ' +
+                '(1) Criar pedido em DRAFT, (2) Adicionar itens, (3) Adicionar pagamentos, (4) Definir endereço de entrega, (5) Confirmar pedido. ' +
+                'Oferece endpoints para criação, consulta e gerenciamento completo do ciclo de vida dos pedidos.',
             version: '1.0.0',
         },
         servers: [
