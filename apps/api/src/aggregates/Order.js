@@ -43,6 +43,29 @@ class Order {
     }
 
     /**
+     * Hidrata um pedido existente a partir dos dados do JSON
+     * @param {Object} data - Dados do pedido no formato snake_case
+     * @returns {Order}
+     */
+    static hydrate(data) {
+        const order = Object.create(Order.prototype);
+
+        order.id = data.order_id;
+        order.storeId = data.store_id;
+        order.customer = {
+            name: data.order.customer.name,
+            phone: data.order.customer.temporary_phone,
+        };
+        order.status = data.order.last_status_name;
+        order.items = data.order.items || [];
+        order.payments = data.order.payments || [];
+        order.deliveryAddress = data.order.delivery_address;
+        order.createdAt = new Date(data.order.created_at).toISOString();
+
+        return order;
+    }
+
+    /**
      * Verifica se o pedido está em estado DRAFT
      * @returns {boolean}
      */
@@ -53,9 +76,10 @@ class Order {
     /**
      * Adiciona um item ao pedido (apenas em DRAFT)
      * @param {Object} item - Item a ser adicionado
-     * @param {number} item.productId - ID do produto
+     * @param {number} item.code - Código do produto
      * @param {number} item.quantity - Quantidade
      * @param {number} item.price - Preço unitário
+     * @param {string} [item.name] - Nome do produto
      * @param {string} [item.observations] - Observações opcionais
      */
     addItem(item) {
@@ -65,16 +89,21 @@ class Order {
             );
         }
 
-        if (!item.productId || !item.quantity || !item.price) {
-            throw new Error('Item must have productId, quantity and price');
+        if (!item.code || !item.quantity || !item.price) {
+            throw new Error('Item must have code, quantity and price');
         }
 
+        const totalPrice = item.price * item.quantity;
+
         const newItem = {
-            id: randomUUID(),
-            productId: item.productId,
-            quantity: item.quantity,
+            code: item.code,
             price: item.price,
             observations: item.observations || null,
+            total_price: totalPrice,
+            name: item.name || `Product ${item.code}`,
+            quantity: item.quantity,
+            discount: 0,
+            condiments: [],
         };
 
         this.items.push(newItem);
