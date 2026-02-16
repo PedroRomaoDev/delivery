@@ -5,6 +5,7 @@ import {
     makeFindAllOrdersController,
     makeCreateOrderController,
     makeAddItemToOrderController,
+    makeAddPaymentToOrderController,
 } from './src/factories/index.js';
 
 const app = fastify();
@@ -38,6 +39,7 @@ await app.register(fastifySwaggerUI, {
 const findAllOrdersController = makeFindAllOrdersController();
 const createOrderController = makeCreateOrderController();
 const addItemToOrderController = makeAddItemToOrderController();
+const addPaymentToOrderController = makeAddPaymentToOrderController();
 
 app.route({
     method: 'GET',
@@ -362,6 +364,106 @@ app.route({
     },
     handler: async (request, reply) => {
         return addItemToOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'POST',
+    url: '/orders/:id/payments',
+    schema: {
+        tags: ['Orders'],
+        summary: 'Adicionar pagamento ao pedido',
+        description:
+            'Adiciona um novo pagamento a um pedido em estado DRAFT. O valor do pagamento é calculado automaticamente baseado no total dos items.',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    description: 'ID do pedido',
+                },
+            },
+        },
+        body: {
+            type: 'object',
+            required: ['origin'],
+            properties: {
+                origin: {
+                    type: 'string',
+                    description:
+                        'Método de pagamento (CREDIT_CARD, PIX, CASH, VR, etc.)',
+                },
+                prepaid: {
+                    type: 'boolean',
+                    description: 'Se o pagamento foi pré-pago (padrão: true)',
+                    default: true,
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Pagamento adicionado com sucesso',
+                type: 'object',
+                properties: {
+                    store_id: { type: 'string' },
+                    order_id: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    id: { type: 'string' },
+                                },
+                            },
+                            items: { type: 'array', items: {} },
+                            payments: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        prepaid: { type: 'boolean' },
+                                        value: { type: 'number' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            delivery_address: { type: ['object', 'null'] },
+                            created_at: { type: 'number' },
+                            total_price: { type: 'number' },
+                        },
+                    },
+                },
+            },
+            400: {
+                description:
+                    'Dados inválidos, pedido não encontrado ou pedido não está em DRAFT',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Erro interno do servidor',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return addPaymentToOrderController.handle(request, reply);
     },
 });
 
