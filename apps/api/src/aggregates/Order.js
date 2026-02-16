@@ -125,6 +125,12 @@ class Order {
             );
         }
 
+        if (this.payments.length > 0) {
+            throw new Error(
+                'Order already has a payment. Only one payment is allowed per order',
+            );
+        }
+
         if (!payment.origin || !payment.value) {
             throw new Error('Payment must have origin and value');
         }

@@ -219,6 +219,31 @@ describe('Order Aggregate', () => {
                 'Payment must have origin and value',
             );
         });
+
+        it('should throw error when trying to add a second payment', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            // Adiciona o primeiro pagamento
+            order.addPayment({
+                origin: 'PIX',
+                value: 100.0,
+                prepaid: true,
+            });
+
+            // Tenta adicionar um segundo pagamento
+            expect(() =>
+                order.addPayment({
+                    origin: 'CREDIT_CARD',
+                    value: 50.0,
+                    prepaid: true,
+                }),
+            ).toThrow(
+                'Order already has a payment. Only one payment is allowed per order',
+            );
+        });
     });
 
     describe('setDeliveryAddress', () => {
@@ -341,9 +366,8 @@ describe('Order Aggregate', () => {
             });
 
             order.addPayment({ origin: 'CREDIT_CARD', value: 100.0 });
-            order.addPayment({ origin: 'PIX', value: 30.0 });
 
-            expect(order.getTotalPayments()).toBe(130.0);
+            expect(order.getTotalPayments()).toBe(100.0);
         });
     });
 
