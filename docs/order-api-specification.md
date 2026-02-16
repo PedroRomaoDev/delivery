@@ -166,39 +166,31 @@ Remove o pagamento existente do pedido.
 
 ------------------------------------------------------------------------
 
-#### Adicionar Endereço de Entrega
+#### Adicionar/Atualizar Endereço de Entrega
 
 POST /orders/:id/delivery-address
 
 ``` json
 {
-  "street": "string",
-  "number": "string",
+  "street_name": "string",
+  "street_number": "string",
   "city": "string",
   "state": "string",
-  "zipCode": "string",
-  "complement": "string (opcional)"
+  "postal_code": "string",
+  "country": "string",
+  "neighborhood": "string (opcional)",
+  "reference": "string (opcional)"
 }
 ```
 
-------------------------------------------------------------------------
-
-#### Atualizar Endereço de Entrega
-
-PUT /orders/:id/delivery-address
-
-``` json
-{
-  "street": "string",
-  "number": "string",
-  "city": "string",
-  "state": "string",
-  "zipCode": "string",
-  "complement": "string (opcional)"
-}
-```
-
-Substitui completamente o endereço existente.
+**Regras:**
+- Campos obrigatórios: street_name, street_number, city, state, postal_code, country
+- Campos opcionais: neighborhood, reference
+- **Geocoding automático**: As coordenadas (latitude, longitude, id) são calculadas automaticamente via OpenStreetMap Nominatim se não fornecidas
+- Se o geocoding falhar ou tiver baixa confiança, coordinates será null (sem bloquear o pedido)
+- Pode enviar coordinates manualmente no body para sobrescrever o cálculo automático
+- Substitui completamente o endereço existente (idempotente)
+- Pedido deve estar em DRAFT
 
 ------------------------------------------------------------------------
 
