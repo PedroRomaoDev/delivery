@@ -260,42 +260,59 @@ describe('Order Aggregate', () => {
             });
 
             const address = {
-                street: 'Rua das Flores',
-                number: '123',
+                street_name: 'Rua das Flores',
+                street_number: '123',
                 city: 'São Paulo',
                 state: 'SP',
-                zipCode: '01234-567',
-                complement: 'Apto 45',
+                postal_code: '01234-567',
+                country: 'BR',
+                neighborhood: 'Centro',
+                reference: 'Apto 45',
+                coordinates: {
+                    latitude: -23.55052,
+                    longitude: -46.633308,
+                    id: 123,
+                },
             };
 
             const setAddress = order.setDeliveryAddress(address);
 
-            expect(setAddress.street).toBe('Rua das Flores');
-            expect(setAddress.number).toBe('123');
+            expect(setAddress.street_name).toBe('Rua das Flores');
+            expect(setAddress.street_number).toBe('123');
             expect(setAddress.city).toBe('São Paulo');
             expect(setAddress.state).toBe('SP');
-            expect(setAddress.zipCode).toBe('01234-567');
-            expect(setAddress.complement).toBe('Apto 45');
+            expect(setAddress.postal_code).toBe('01234-567');
+            expect(setAddress.country).toBe('BR');
+            expect(setAddress.neighborhood).toBe('Centro');
+            expect(setAddress.reference).toBe('Apto 45');
+            expect(setAddress.coordinates).toEqual({
+                latitude: -23.55052,
+                longitude: -46.633308,
+                id: 123,
+            });
             expect(order.deliveryAddress).toEqual(setAddress);
         });
 
-        it('should set delivery address without complement', () => {
+        it('should set delivery address without optional fields', () => {
             const order = new Order('store-123', {
                 name: 'João Silva',
                 phone: '11987654321',
             });
 
             const address = {
-                street: 'Rua das Flores',
-                number: '123',
+                street_name: 'Rua das Flores',
+                street_number: '123',
                 city: 'São Paulo',
                 state: 'SP',
-                zipCode: '01234-567',
+                postal_code: '01234-567',
+                country: 'BR',
             };
 
             const setAddress = order.setDeliveryAddress(address);
 
-            expect(setAddress.complement).toBeNull();
+            expect(setAddress.neighborhood).toBeNull();
+            expect(setAddress.reference).toBeNull();
+            expect(setAddress.coordinates).toBeNull();
         });
 
         it('should throw error when setting address to non-DRAFT order', () => {
@@ -306,11 +323,12 @@ describe('Order Aggregate', () => {
             order.status = 'RECEIVED';
 
             const address = {
-                street: 'Rua das Flores',
-                number: '123',
+                street_name: 'Rua das Flores',
+                street_number: '123',
                 city: 'São Paulo',
                 state: 'SP',
-                zipCode: '01234-567',
+                postal_code: '01234-567',
+                country: 'BR',
             };
 
             expect(() => order.setDeliveryAddress(address)).toThrow(
@@ -325,9 +343,9 @@ describe('Order Aggregate', () => {
             });
 
             expect(() =>
-                order.setDeliveryAddress({ street: 'Rua das Flores' }),
+                order.setDeliveryAddress({ street_name: 'Rua das Flores' }),
             ).toThrow(
-                'Address must have street, number, city, state and zipCode',
+                'Address must have street_name, street_number, city, state, postal_code and country',
             );
         });
     });
@@ -405,11 +423,12 @@ describe('Order Aggregate', () => {
             });
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.setDeliveryAddress({
-                street: 'Rua A',
-                number: '1',
+                street_name: 'Rua A',
+                street_number: '1',
                 city: 'SP',
                 state: 'SP',
-                zipCode: '12345-678',
+                postal_code: '12345-678',
+                country: 'BR',
             });
 
             expect(order.isComplete()).toBe(false);
@@ -423,11 +442,12 @@ describe('Order Aggregate', () => {
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ origin: 'PIX', value: 30.0 });
             order.setDeliveryAddress({
-                street: 'Rua A',
-                number: '1',
+                street_name: 'Rua A',
+                street_number: '1',
                 city: 'SP',
                 state: 'SP',
-                zipCode: '12345-678',
+                postal_code: '12345-678',
+                country: 'BR',
             });
 
             expect(order.isComplete()).toBe(false);
@@ -441,11 +461,12 @@ describe('Order Aggregate', () => {
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ origin: 'PIX', value: 50.0 });
             order.setDeliveryAddress({
-                street: 'Rua A',
-                number: '1',
+                street_name: 'Rua A',
+                street_number: '1',
                 city: 'SP',
                 state: 'SP',
-                zipCode: '12345-678',
+                postal_code: '12345-678',
+                country: 'BR',
             });
 
             expect(order.isComplete()).toBe(true);
@@ -474,11 +495,12 @@ describe('Order Aggregate', () => {
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ origin: 'PIX', value: 50.0 });
             order.setDeliveryAddress({
-                street: 'Rua A',
-                number: '1',
+                street_name: 'Rua A',
+                street_number: '1',
                 city: 'SP',
                 state: 'SP',
-                zipCode: '12345-678',
+                postal_code: '12345-678',
+                country: 'BR',
             });
 
             expect(order.getMissingSteps()).toEqual([]);
@@ -492,11 +514,12 @@ describe('Order Aggregate', () => {
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
             order.addPayment({ origin: 'PIX', value: 30.0 });
             order.setDeliveryAddress({
-                street: 'Rua A',
-                number: '1',
+                street_name: 'Rua A',
+                street_number: '1',
                 city: 'SP',
                 state: 'SP',
-                zipCode: '12345-678',
+                postal_code: '12345-678',
+                country: 'BR',
             });
 
             const missing = order.getMissingSteps();
