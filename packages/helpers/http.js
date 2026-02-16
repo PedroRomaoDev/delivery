@@ -21,3 +21,19 @@ export const badRequest = (message) => ({
         message,
     },
 });
+
+export const validationError = (errors) => {
+    const fields = errors.map((err) => err.field).join(', ');
+    const message =
+        errors.length === 1
+            ? `Validation error in field: ${fields}`
+            : `Validation error in fields: ${fields}`;
+
+    return {
+        statusCode: 400,
+        body: {
+            message,
+            errors,
+        },
+    };
+};
