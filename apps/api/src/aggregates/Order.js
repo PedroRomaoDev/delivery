@@ -172,24 +172,28 @@ class Order {
 
         if (
             !address ||
-            !address.street ||
-            !address.number ||
+            !address.street_name ||
+            !address.street_number ||
             !address.city ||
             !address.state ||
-            !address.zipCode
+            !address.postal_code ||
+            !address.country
         ) {
             throw new Error(
-                'Address must have street, number, city, state and zipCode',
+                'Address must have street_name, street_number, city, state, postal_code and country',
             );
         }
 
         this.deliveryAddress = {
-            street: address.street,
-            number: address.number,
+            street_name: address.street_name,
+            street_number: address.street_number,
             city: address.city,
             state: address.state,
-            zipCode: address.zipCode,
-            complement: address.complement || null,
+            postal_code: address.postal_code,
+            country: address.country,
+            neighborhood: address.neighborhood || null,
+            reference: address.reference || null,
+            coordinates: address.coordinates || null,
         };
 
         return this.deliveryAddress;
