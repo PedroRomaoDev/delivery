@@ -55,6 +55,13 @@ describe('CreateOrderController', () => {
                 delivery_address: null,
                 created_at: 1770842000000,
                 total_price: 0,
+                statuses: [
+                    {
+                        name: 'DRAFT',
+                        created_at: 1770842000000,
+                        origin: 'CUSTOMER',
+                    },
+                ],
             },
         };
 
@@ -64,6 +71,18 @@ describe('CreateOrderController', () => {
 
         expect(reply.status).toHaveBeenCalledWith(201);
         expect(reply.send).toHaveBeenCalledWith(mockOrder);
+        expect(reply.send).toHaveBeenCalledWith(
+            expect.objectContaining({
+                order: expect.objectContaining({
+                    statuses: expect.arrayContaining([
+                        expect.objectContaining({
+                            name: 'DRAFT',
+                            origin: 'CUSTOMER',
+                        }),
+                    ]),
+                }),
+            }),
+        );
     });
 
     it('should use default storeId when storeId is not provided', async () => {
@@ -90,6 +109,13 @@ describe('CreateOrderController', () => {
                 delivery_address: null,
                 created_at: 1770842000000,
                 total_price: 0,
+                statuses: [
+                    {
+                        name: 'DRAFT',
+                        created_at: 1770842000000,
+                        origin: 'CUSTOMER',
+                    },
+                ],
             },
         };
 

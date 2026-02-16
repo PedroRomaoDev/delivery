@@ -41,6 +41,9 @@ describe('CreateOrderRepository', () => {
         expect(savedOrder.order.customer.temporary_phone).toBe('11987654321');
         expect(savedOrder.order.customer.name).toBe('João Silva');
         expect(savedOrder.order.last_status_name).toBe('DRAFT');
+        expect(savedOrder.order.statuses).toHaveLength(1);
+        expect(savedOrder.order.statuses[0].name).toBe('DRAFT');
+        expect(savedOrder.order.statuses[0].origin).toBe('CUSTOMER');
     });
 
     it('should append order to existing orders', async () => {
@@ -109,6 +112,10 @@ describe('CreateOrderRepository', () => {
         expect(orders[0].order.delivery_address).toBeNull();
         expect(orders[0].order.created_at).toBeDefined();
         expect(orders[0].order.total_price).toBe(0);
+        expect(orders[0].order.statuses).toHaveLength(1);
+        expect(orders[0].order.statuses[0].name).toBe('DRAFT');
+        expect(orders[0].order.statuses[0].origin).toBe('CUSTOMER');
+        expect(orders[0].order.statuses[0].created_at).toBeDefined();
     });
 
     it('should throw error when order is invalid', async () => {

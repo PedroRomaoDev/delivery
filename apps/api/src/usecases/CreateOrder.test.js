@@ -35,6 +35,13 @@ describe('CreateOrderUseCase', () => {
                 delivery_address: null,
                 created_at: 1770842000000,
                 total_price: 0,
+                statuses: [
+                    {
+                        name: 'DRAFT',
+                        created_at: 1770842000000,
+                        origin: 'CUSTOMER',
+                    },
+                ],
             },
         };
 
@@ -46,6 +53,9 @@ describe('CreateOrderUseCase', () => {
         expect(result.order.customer.temporary_phone).toBe('11987654321');
         expect(result.order.customer.name).toBe('João Silva');
         expect(result.order.last_status_name).toBe('DRAFT');
+        expect(result.order.statuses).toHaveLength(1);
+        expect(result.order.statuses[0].name).toBe('DRAFT');
+        expect(result.order.statuses[0].origin).toBe('CUSTOMER');
         expect(createOrderRepository.execute).toHaveBeenCalledTimes(1);
     });
 

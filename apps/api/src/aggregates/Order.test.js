@@ -19,6 +19,10 @@ describe('Order Aggregate', () => {
             expect(order.payments).toEqual([]);
             expect(order.deliveryAddress).toBeNull();
             expect(order.createdAt).toBeDefined();
+            expect(order.statuses).toHaveLength(1);
+            expect(order.statuses[0].name).toBe('DRAFT');
+            expect(order.statuses[0].origin).toBe('CUSTOMER');
+            expect(order.statuses[0].created_at).toBeDefined();
         });
 
         it('should generate unique ID for each order', () => {
@@ -98,6 +102,8 @@ describe('Order Aggregate', () => {
             expect(json.order.payments).toEqual([]);
             expect(json.order.delivery_address).toBeNull();
             expect(json.order.created_at).toBeDefined();
+            expect(json.order.statuses).toHaveLength(1);
+            expect(json.order.statuses[0].name).toBe('DRAFT');
             expect(json.order.total_price).toBe(0);
         });
     });
@@ -499,6 +505,55 @@ describe('Order Aggregate', () => {
             expect(missing[0]).toContain('Payment total');
             expect(missing[0]).toContain('30.00');
             expect(missing[0]).toContain('50.00');
+        });
+    });
+
+    describe('addStatusToHistory', () => {
+        it('should add new status to history', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(order.statuses).toHaveLength(1);
+            expect(order.status).toBe('DRAFT');
+
+            order.addStatusToHistory('RECEIVED', 'STORE');
+
+            expect(order.statuses).toHaveLength(2);
+            expect(order.status).toBe('RECEIVED');
+            expect(order.statuses[1].name).toBe('RECEIVED');
+            expect(order.statuses[1].origin).toBe('STORE');
+            expect(order.statuses[1].created_at).toBeDefined();
+        });
+
+        it('should use SYSTEM as default origin', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addStatusToHistory('CONFIRMED');
+
+            expect(order.statuses[1].origin).toBe('SYSTEM');
+        });
+
+        it('should maintain status history in order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addStatusToHistory('RECEIVED', 'STORE');
+            order.addStatusToHistory('CONFIRMED', 'STORE');
+            order.addStatusToHistory('DISPATCHED', 'STORE');
+
+            expect(order.statuses).toHaveLength(4);
+            expect(order.statuses[0].name).toBe('DRAFT');
+            expect(order.statuses[1].name).toBe('RECEIVED');
+            expect(order.statuses[2].name).toBe('CONFIRMED');
+            expect(order.statuses[3].name).toBe('DISPATCHED');
+            expect(order.status).toBe('DISPATCHED');
         });
     });
 });
