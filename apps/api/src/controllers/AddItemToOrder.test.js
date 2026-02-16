@@ -16,9 +16,9 @@ describe('AddItemToOrderController', () => {
         );
 
         request = {
-            params: { id: 'order-123' },
+            params: { id: '123e4567-e89b-12d3-a456-426614174000' }, // UUID válido
             body: {
-                code: 123,
+                code: '123',
                 quantity: 2,
                 observations: 'Sem cebola',
                 name: 'Test Product',
@@ -34,7 +34,7 @@ describe('AddItemToOrderController', () => {
     it('should add item to order successfully', async () => {
         const mockOrder = {
             store_id: 'store-123',
-            order_id: 'order-123',
+            order_id: '123e4567-e89b-12d3-a456-426614174000',
             order: {
                 customer: {
                     temporary_phone: '11987654321',
@@ -43,7 +43,7 @@ describe('AddItemToOrderController', () => {
                 last_status_name: 'DRAFT',
                 items: [
                     {
-                        code: 123,
+                        code: '123',
                         price: 50.0,
                         observations: 'Sem cebola',
                         total_price: 100.0,
@@ -65,8 +65,8 @@ describe('AddItemToOrderController', () => {
         await addItemToOrderController.handle(request, reply);
 
         expect(addItemToOrderUseCase.execute).toHaveBeenCalledWith({
-            orderId: 'order-123',
-            code: 123,
+            orderId: '123e4567-e89b-12d3-a456-426614174000',
+            code: '123',
             quantity: 2,
             observations: 'Sem cebola',
             name: 'Test Product',
@@ -82,7 +82,12 @@ describe('AddItemToOrderController', () => {
 
         expect(reply.status).toHaveBeenCalledWith(400);
         expect(reply.send).toHaveBeenCalledWith({
-            message: 'code is required',
+            message: expect.stringContaining('code'),
+            errors: expect.arrayContaining([
+                expect.objectContaining({
+                    field: 'code',
+                }),
+            ]),
         });
     });
 
@@ -93,7 +98,12 @@ describe('AddItemToOrderController', () => {
 
         expect(reply.status).toHaveBeenCalledWith(400);
         expect(reply.send).toHaveBeenCalledWith({
-            message: 'quantity is required',
+            message: expect.stringContaining('quantity'),
+            errors: expect.arrayContaining([
+                expect.objectContaining({
+                    field: 'quantity',
+                }),
+            ]),
         });
     });
 
@@ -104,7 +114,13 @@ describe('AddItemToOrderController', () => {
 
         expect(reply.status).toHaveBeenCalledWith(400);
         expect(reply.send).toHaveBeenCalledWith({
-            message: 'quantity must be a positive number',
+            message: expect.stringContaining('quantity'),
+            errors: expect.arrayContaining([
+                expect.objectContaining({
+                    field: 'quantity',
+                    message: expect.stringContaining('positive'),
+                }),
+            ]),
         });
     });
 
@@ -152,7 +168,7 @@ describe('AddItemToOrderController', () => {
 
         addItemToOrderUseCase.execute.mockResolvedValue({
             store_id: 'store-123',
-            order_id: 'order-123',
+            order_id: '123e4567-e89b-12d3-a456-426614174000',
             order: {
                 items: [],
             },
@@ -161,8 +177,8 @@ describe('AddItemToOrderController', () => {
         await addItemToOrderController.handle(request, reply);
 
         expect(addItemToOrderUseCase.execute).toHaveBeenCalledWith({
-            orderId: 'order-123',
-            code: 123,
+            orderId: '123e4567-e89b-12d3-a456-426614174000',
+            code: '123',
             quantity: 2,
             observations: null,
             name: 'Test Product',
@@ -176,7 +192,13 @@ describe('AddItemToOrderController', () => {
 
         expect(reply.status).toHaveBeenCalledWith(400);
         expect(reply.send).toHaveBeenCalledWith({
-            message: 'quantity must be a positive number',
+            message: expect.stringContaining('quantity'),
+            errors: expect.arrayContaining([
+                expect.objectContaining({
+                    field: 'quantity',
+                    message: expect.stringContaining('positive'),
+                }),
+            ]),
         });
     });
 });

@@ -32,8 +32,9 @@ describe('CreateOrderController', () => {
     });
 
     it('should create order with valid data', async () => {
+        const validUuid = '550e8400-e29b-41d4-a716-446655440000';
         request.body = {
-            storeId: 'store-123',
+            storeId: validUuid,
             customer: {
                 name: 'João Silva',
                 phone: '11987654321',
@@ -41,7 +42,7 @@ describe('CreateOrderController', () => {
         };
 
         const mockOrder = {
-            store_id: 'store-123',
+            store_id: validUuid,
             order_id: 'order-123',
             order: {
                 customer: {
@@ -65,7 +66,9 @@ describe('CreateOrderController', () => {
         expect(reply.send).toHaveBeenCalledWith(mockOrder);
     });
 
-    it('should return 400 when storeId is missing', async () => {
+    it('should use default storeId when storeId is not provided', async () => {
+        const DEFAULT_STORE_ID = '98765432-abcd-ef00-1234-567890abcdef';
+
         request.body = {
             customer: {
                 name: 'João Silva',
@@ -73,30 +76,58 @@ describe('CreateOrderController', () => {
             },
         };
 
+        const mockOrder = {
+            store_id: DEFAULT_STORE_ID,
+            order_id: 'order-123',
+            order: {
+                customer: {
+                    temporary_phone: '11987654321',
+                    name: 'João Silva',
+                },
+                last_status_name: 'DRAFT',
+                items: [],
+                payments: [],
+                delivery_address: null,
+                created_at: 1770842000000,
+                total_price: 0,
+            },
+        };
+
+        createOrderUseCase.execute.mockResolvedValue(mockOrder);
+
         await controller.execute(request, reply);
 
-        expect(reply.status).toHaveBeenCalledWith(400);
-        expect(reply.send).toHaveBeenCalledWith({
-            message: 'storeId and customer are required',
+        expect(reply.status).toHaveBeenCalledWith(201);
+        expect(createOrderUseCase.execute).toHaveBeenCalledWith({
+            storeId: DEFAULT_STORE_ID,
+            customer: {
+                name: 'João Silva',
+                phone: '11987654321',
+            },
         });
     });
 
     it('should return 400 when customer is missing', async () => {
         request.body = {
-            storeId: 'store-123',
+            storeId: '550e8400-e29b-41d4-a716-446655440000',
         };
 
         await controller.execute(request, reply);
 
         expect(reply.status).toHaveBeenCalledWith(400);
         expect(reply.send).toHaveBeenCalledWith({
-            message: 'storeId and customer are required',
+            message: expect.stringContaining('customer'),
+            errors: expect.arrayContaining([
+                expect.objectContaining({
+                    field: 'customer',
+                }),
+            ]),
         });
     });
 
     it('should return 400 when customer.name is missing', async () => {
         request.body = {
-            storeId: 'store-123',
+            storeId: '550e8400-e29b-41d4-a716-446655440000',
             customer: {
                 phone: '11987654321',
             },
@@ -106,13 +137,18 @@ describe('CreateOrderController', () => {
 
         expect(reply.status).toHaveBeenCalledWith(400);
         expect(reply.send).toHaveBeenCalledWith({
-            message: 'customer.name and customer.phone are required',
+            message: expect.stringContaining('customer.name'),
+            errors: expect.arrayContaining([
+                expect.objectContaining({
+                    field: 'customer.name',
+                }),
+            ]),
         });
     });
 
     it('should return 400 when customer.phone is missing', async () => {
         request.body = {
-            storeId: 'store-123',
+            storeId: '550e8400-e29b-41d4-a716-446655440000',
             customer: {
                 name: 'João Silva',
             },
@@ -122,13 +158,18 @@ describe('CreateOrderController', () => {
 
         expect(reply.status).toHaveBeenCalledWith(400);
         expect(reply.send).toHaveBeenCalledWith({
-            message: 'customer.name and customer.phone are required',
+            message: expect.stringContaining('customer.phone'),
+            errors: expect.arrayContaining([
+                expect.objectContaining({
+                    field: 'customer.phone',
+                }),
+            ]),
         });
     });
 
     it('should return 500 when UseCase throws error', async () => {
         request.body = {
-            storeId: 'store-123',
+            storeId: '550e8400-e29b-41d4-a716-446655440000',
             customer: {
                 name: 'João Silva',
                 phone: '11987654321',
@@ -148,8 +189,9 @@ describe('CreateOrderController', () => {
     });
 
     it('should call UseCase with correct parameters', async () => {
+        const validUuid = '550e8400-e29b-41d4-a716-446655440000';
         request.body = {
-            storeId: 'store-123',
+            storeId: validUuid,
             customer: {
                 name: 'João Silva',
                 phone: '11987654321',
@@ -161,7 +203,7 @@ describe('CreateOrderController', () => {
         await controller.execute(request, reply);
 
         expect(createOrderUseCase.execute).toHaveBeenCalledWith({
-            storeId: 'store-123',
+            storeId: validUuid,
             customer: {
                 name: 'João Silva',
                 phone: '11987654321',
