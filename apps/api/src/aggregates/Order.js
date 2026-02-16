@@ -114,8 +114,9 @@ class Order {
     /**
      * Adiciona um pagamento ao pedido (apenas em DRAFT)
      * @param {Object} payment - Pagamento a ser adicionado
-     * @param {string} payment.method - Método de pagamento (CREDIT_CARD, DEBIT_CARD, PIX, CASH)
+     * @param {string} payment.origin - Método de pagamento (CREDIT_CARD, PIX, CASH, VR, etc.)
      * @param {number} payment.value - Valor do pagamento
+     * @param {boolean} [payment.prepaid=true] - Se o pagamento foi pré-pago
      */
     addPayment(payment) {
         if (!this.isDraft()) {
@@ -124,14 +125,14 @@ class Order {
             );
         }
 
-        if (!payment.method || !payment.value) {
-            throw new Error('Payment must have method and value');
+        if (!payment.origin || !payment.value) {
+            throw new Error('Payment must have origin and value');
         }
 
         const newPayment = {
-            id: randomUUID(),
-            method: payment.method,
+            prepaid: payment.prepaid !== undefined ? payment.prepaid : true,
             value: payment.value,
+            origin: payment.origin,
         };
 
         this.payments.push(newPayment);
