@@ -38,7 +38,7 @@ export const addItemToOrderSchema = z.object({
     code: z
         .number({
             required_error: 'code is required',
-            invalid_type_error: 'code must be a string',
+            invalid_type_error: 'code must be a number',
         })
         .min(1, 'code cannot be empty'),
     quantity: z
@@ -58,4 +58,22 @@ export const orderIdParamSchema = z.object({
         required_error: 'orderId is required',
         invalid_type_error: 'orderId must be a string',
     }),
+});
+
+// Formas de pagamento aceitas
+const PAYMENT_ORIGINS = ['CREDIT_CARD', 'DEBIT_CARD', 'CASH', 'PIX', 'VR'];
+
+// Schema para adicionar pagamento ao pedido
+export const addPaymentToOrderSchema = z.object({
+    origin: z.enum(PAYMENT_ORIGINS, {
+        errorMap: () => ({
+            message: `Invalid payment origin. Must be one of: ${PAYMENT_ORIGINS.join(', ')}`,
+        }),
+    }),
+    prepaid: z
+        .boolean({
+            invalid_type_error: 'prepaid must be a boolean (true or false)',
+        })
+        .optional()
+        .default(true),
 });

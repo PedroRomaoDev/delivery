@@ -18,7 +18,7 @@ describe('AddItemToOrderController', () => {
         request = {
             params: { id: '123e4567-e89b-12d3-a456-426614174000' }, // UUID válido
             body: {
-                code: '123',
+                code: 123,
                 quantity: 2,
                 observations: 'Sem cebola',
                 name: 'Test Product',
@@ -43,7 +43,7 @@ describe('AddItemToOrderController', () => {
                 last_status_name: 'DRAFT',
                 items: [
                     {
-                        code: '123',
+                        code: 123,
                         price: 50.0,
                         observations: 'Sem cebola',
                         total_price: 100.0,
@@ -66,7 +66,7 @@ describe('AddItemToOrderController', () => {
 
         expect(addItemToOrderUseCase.execute).toHaveBeenCalledWith({
             orderId: '123e4567-e89b-12d3-a456-426614174000',
-            code: '123',
+            code: 123,
             quantity: 2,
             observations: 'Sem cebola',
             name: 'Test Product',
@@ -178,7 +178,7 @@ describe('AddItemToOrderController', () => {
 
         expect(addItemToOrderUseCase.execute).toHaveBeenCalledWith({
             orderId: '123e4567-e89b-12d3-a456-426614174000',
-            code: '123',
+            code: 123,
             quantity: 2,
             observations: null,
             name: 'Test Product',
