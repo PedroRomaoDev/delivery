@@ -110,7 +110,6 @@ app.route({
                                         properties: {
                                             created_at: { type: 'number' },
                                             name: { type: 'string' },
-                                            order_id: { type: 'string' },
                                             origin: { type: 'string' },
                                         },
                                     },
@@ -225,6 +224,17 @@ app.route({
                             delivery_address: { type: ['object', 'null'] },
                             created_at: { type: 'number' },
                             total_price: { type: 'number' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        name: { type: 'string' },
+                                        created_at: { type: 'number' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -341,6 +351,17 @@ app.route({
                             delivery_address: { type: ['object', 'null'] },
                             created_at: { type: 'number' },
                             total_price: { type: 'number' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        name: { type: 'string' },
+                                        created_at: { type: 'number' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -441,6 +462,17 @@ app.route({
                             delivery_address: { type: ['object', 'null'] },
                             created_at: { type: 'number' },
                             total_price: { type: 'number' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        name: { type: 'string' },
+                                        created_at: { type: 'number' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
                         },
                     },
                 },

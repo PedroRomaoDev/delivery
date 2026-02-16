@@ -6,7 +6,7 @@
       "payments": [
         {
           "prepaid": true,
-          "value": 89.90,
+          "value": 89.9,
           "origin": "CREDIT_CARD"
         }
       ],
@@ -15,14 +15,13 @@
         "name": "Coco Bambu Loja Teste",
         "id": "f052054c-e0a0-4768-ab55-7cb7ead57371"
       },
-      "total_price": 89.90,
-      "order_id": "a1b2c3d4-e5f6-4788-a999-b1c2d3e4f501",
+      "total_price": 89.9,
       "items": [
         {
           "code": 4012,
-          "price": 89.90,
+          "price": 89.9,
           "observations": "Sem cebola",
-          "total_price": 89.90,
+          "total_price": 89.9,
           "name": "Camarao Alfredo",
           "quantity": 1,
           "discount": 0,
@@ -34,13 +33,11 @@
         {
           "created_at": 1770842000500,
           "name": "RECEIVED",
-          "order_id": "a1b2c3d4-e5f6-4788-a999-b1c2d3e4f501",
           "origin": "STORE"
         },
         {
           "created_at": 1770842100000,
           "name": "CONFIRMED",
-          "order_id": "a1b2c3d4-e5f6-4788-a999-b1c2d3e4f501",
           "origin": "STORE"
         }
       ],
@@ -58,8 +55,8 @@
         "street_number": "1050",
         "state": "Distrito Federal",
         "coordinates": {
-          "longitude": -48.025000,
-          "latitude": -15.835000,
+          "longitude": -48.025,
+          "latitude": -15.835,
           "id": 1323150
         }
       }
@@ -72,7 +69,7 @@
       "payments": [
         {
           "prepaid": true,
-          "value": 54.00,
+          "value": 54,
           "origin": "PIX"
         }
       ],
@@ -81,14 +78,13 @@
         "name": "COCO BAMBU CHIQUE CHIQUE",
         "id": "98765432-abcd-ef00-1234-567890abcdef"
       },
-      "total_price": 54.00,
-      "order_id": "b2c3d4e5-f6a7-4899-b000-c2d3e4f502",
+      "total_price": 54,
       "items": [
         {
           "code": 105,
-          "price": 54.00,
+          "price": 54,
           "observations": null,
-          "total_price": 54.00,
+          "total_price": 54,
           "name": "Camarao Delicia",
           "quantity": 1,
           "discount": 0,
@@ -100,13 +96,11 @@
         {
           "created_at": 1770843000500,
           "name": "RECEIVED",
-          "order_id": "b2c3d4e5-f6a7-4899-b000-c2d3e4f502",
           "origin": "STORE"
         },
         {
           "created_at": 1770843200000,
           "name": "CANCELED",
-          "order_id": "b2c3d4e5-f6a7-4899-b000-c2d3e4f502",
           "origin": "STORE"
         }
       ],
@@ -124,8 +118,8 @@
         "street_number": "Bloco B",
         "state": "Distrito Federal",
         "coordinates": {
-          "longitude": -47.880000,
-          "latitude": -15.780000,
+          "longitude": -47.88,
+          "latitude": -15.78,
           "id": 1323160
         }
       }
@@ -138,7 +132,7 @@
       "payments": [
         {
           "prepaid": true,
-          "value": 250.50,
+          "value": 250.5,
           "origin": "VR"
         }
       ],
@@ -147,14 +141,13 @@
         "name": "Coco Bambu Loja Teste",
         "id": "f052054c-e0a0-4768-ab55-7cb7ead57371"
       },
-      "total_price": 250.50,
-      "order_id": "c3d4e5f6-a7b8-4900-c111-d3e4f503",
+      "total_price": 250.5,
       "items": [
         {
           "code": 5001,
-          "price": 250.50,
+          "price": 250.5,
           "observations": null,
-          "total_price": 250.50,
+          "total_price": 250.5,
           "name": "Camarão Internacional (Serve 4)",
           "quantity": 1,
           "discount": 0,
@@ -166,19 +159,16 @@
         {
           "created_at": 1770835000500,
           "name": "RECEIVED",
-          "order_id": "c3d4e5f6-a7b8-4900-c111-d3e4f503",
           "origin": "STORE"
         },
         {
           "created_at": 1770835100000,
           "name": "CONFIRMED",
-          "order_id": "c3d4e5f6-a7b8-4900-c111-d3e4f503",
           "origin": "STORE"
         },
         {
           "created_at": 1770838000000,
           "name": "DISPATCHED",
-          "order_id": "c3d4e5f6-a7b8-4900-c111-d3e4f503",
           "origin": "STORE"
         }
       ],
@@ -196,8 +186,8 @@
         "street_number": "Conjunto 9",
         "state": "Distrito Federal",
         "coordinates": {
-          "longitude": -47.900000,
-          "latitude": -15.850000,
+          "longitude": -47.9,
+          "latitude": -15.85,
           "id": 1323170
         }
       }
@@ -210,7 +200,7 @@
       "payments": [
         {
           "prepaid": false,
-          "value": 35.90,
+          "value": 35.9,
           "origin": "CASH"
         }
       ],
@@ -219,14 +209,13 @@
         "name": "COCO BAMBU CHIQUE CHIQUE",
         "id": "98765432-abcd-ef00-1234-567890abcdef"
       },
-      "total_price": 35.90,
-      "order_id": "d4e5f6a7-b8c9-5011-d222-e4f504",
+      "total_price": 35.9,
       "items": [
         {
           "code": 202,
-          "price": 35.90,
+          "price": 35.9,
           "observations": null,
-          "total_price": 35.90,
+          "total_price": 35.9,
           "name": "Batata Frita Especial",
           "quantity": 1,
           "discount": 0,
@@ -238,7 +227,6 @@
         {
           "created_at": 1770845000500,
           "name": "RECEIVED",
-          "order_id": "d4e5f6a7-b8c9-5011-d222-e4f504",
           "origin": "STORE"
         }
       ],
@@ -256,8 +244,8 @@
         "street_number": "Sala 404",
         "state": "Distrito Federal",
         "coordinates": {
-          "longitude": -47.885000,
-          "latitude": -15.790000,
+          "longitude": -47.885,
+          "latitude": -15.79,
           "id": 1323180
         }
       }
