@@ -23,6 +23,13 @@ class Order {
         this.payments = [];
         this.deliveryAddress = null;
         this.createdAt = new Date().toISOString();
+        this.statuses = [
+            {
+                name: 'DRAFT',
+                created_at: new Date().getTime(),
+                origin: 'CUSTOMER',
+            },
+        ];
     }
 
     #validateConstructorParams(storeId, customer) {
@@ -62,6 +69,7 @@ class Order {
         order.payments = data.order.payments || [];
         order.deliveryAddress = data.order.delivery_address;
         order.createdAt = new Date(data.order.created_at).toISOString();
+        order.statuses = data.order.statuses || [];
 
         return order;
     }
@@ -259,6 +267,20 @@ class Order {
     }
 
     /**
+     * Adiciona um novo status ao histórico de status do pedido
+     * @param {string} statusName - Nome do status (DRAFT, RECEIVED, CONFIRMED, etc.)
+     * @param {string} origin - Origem da mudança (CUSTOMER, STORE, SYSTEM)
+     */
+    addStatusToHistory(statusName, origin = 'SYSTEM') {
+        this.status = statusName;
+        this.statuses.push({
+            name: statusName,
+            created_at: new Date().getTime(),
+            origin: origin,
+        });
+    }
+
+    /**
      * Retorna uma representação simples do pedido para serialização
      * @returns {Object}
      */
@@ -281,6 +303,7 @@ class Order {
                 delivery_address: this.deliveryAddress,
                 created_at: new Date(this.createdAt).getTime(),
                 total_price: this.getTotalItems(),
+                statuses: this.statuses,
             },
         };
     }
