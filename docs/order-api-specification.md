@@ -54,6 +54,9 @@ DRAFT
 3.  Transições de estado devem respeitar a máquina de estados.
 4.  O status nunca deve ser alterado diretamente via PATCH.
 5.  O ID do pedido deve ser enviado exclusivamente na URL.
+6.  **Apenas 1 pagamento é permitido por pedido.**
+7.  O valor do pagamento é calculado automaticamente com base no total dos items.
+8.  Formas de pagamento aceitas: CREDIT_CARD, DEBIT_CARD, CASH, PIX, VR.
 
 ------------------------------------------------------------------------
 
@@ -143,22 +146,73 @@ POST /orders/:id/payments
 
 ``` json
 {
-  "method": "CREDIT_CARD",
-  "value": 89.90
+  "origin": "CREDIT_CARD | DEBIT_CARD | CASH | PIX | VR",
+  "prepaid": true
 }
 ```
+
+**Regras:**
+- Apenas 1 pagamento por pedido
+- Valor é calculado automaticamente do total dos items
+- Pedido deve ter items antes de adicionar pagamento
+
+------------------------------------------------------------------------
+
+#### Remover Pagamento
+
+DELETE /orders/:id/payments
+
+Remove o pagamento existente do pedido.
+
+------------------------------------------------------------------------
+
+#### Adicionar Endereço de Entrega
+
+POST /orders/:id/delivery-address
+
+``` json
+{
+  "street": "string",
+  "number": "string",
+  "city": "string",
+  "state": "string",
+  "zipCode": "string",
+  "complement": "string (opcional)"
+}
+```
+
+------------------------------------------------------------------------
+
+#### Atualizar Endereço de Entrega
+
+PUT /orders/:id/delivery-address
+
+``` json
+{
+  "street": "string",
+  "number": "string",
+  "city": "string",
+  "state": "string",
+  "zipCode": "string",
+  "complement": "string (opcional)"
+}
+```
+
+Substitui completamente o endereço existente.
+
+------------------------------------------------------------------------
+
+#### Remover Endereço de Entrega
+
+DELETE /orders/:id/delivery-address
+
+Remove o endereço de entrega do pedido.
 
 ------------------------------------------------------------------------
 
 #### Atualizar Cliente
 
 PATCH /orders/:id/customer
-
-------------------------------------------------------------------------
-
-#### Atualizar Endereço
-
-PATCH /orders/:id/delivery-address
 
 ------------------------------------------------------------------------
 
