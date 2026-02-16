@@ -1,8 +1,10 @@
 import {
     created,
-    badRequest,
+    validationError,
     serverError,
 } from '../../../../packages/helpers/http.js';
+import { validate } from '../../../../packages/helpers/validate.js';
+import { createOrderSchema } from '@delivery/shared/schemas';
 
 class CreateOrderController {
     constructor(createOrderUseCase) {
@@ -14,22 +16,15 @@ class CreateOrderController {
 
     async execute(request, reply) {
         try {
-            const { storeId, customer } = request.body;
+            // Validação com Zod
+            const validation = validate(createOrderSchema, request.body);
 
-            // Validação básica de entrada
-            if (!storeId || !customer) {
-                const response = badRequest(
-                    'storeId and customer are required',
-                );
+            if (!validation.success) {
+                const response = validationError(validation.errors);
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            if (!customer.name || !customer.phone) {
-                const response = badRequest(
-                    'customer.name and customer.phone are required',
-                );
-                return reply.status(response.statusCode).send(response.body);
-            }
+            const { storeId, customer } = validation.data;
 
             // Executa o UseCase
             const order = await this.createOrderUseCase.execute({

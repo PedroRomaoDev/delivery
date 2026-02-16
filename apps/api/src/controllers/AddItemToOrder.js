@@ -1,8 +1,14 @@
 import {
     ok,
     badRequest,
+    validationError,
     serverError,
 } from '../../../../packages/helpers/http.js';
+import { validate } from '../../../../packages/helpers/validate.js';
+import {
+    addItemToOrderSchema,
+    orderIdParamSchema,
+} from '@delivery/shared/schemas';
 
 class AddItemToOrderController {
     constructor(addItemToOrderUseCase) {
@@ -11,26 +17,27 @@ class AddItemToOrderController {
 
     async handle(request, reply) {
         try {
-            const { id: orderId } = request.params;
-            const { code, quantity, observations, name } = request.body;
+            // Validação dos parâmetros da rota
+            const paramsValidation = validate(
+                orderIdParamSchema,
+                request.params,
+            );
 
-            // Validações de entrada
-            if (!code) {
-                const response = badRequest('code is required');
+            if (!paramsValidation.success) {
+                const response = validationError(paramsValidation.errors);
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            if (quantity === undefined || quantity === null) {
-                const response = badRequest('quantity is required');
+            // Validação do body
+            const bodyValidation = validate(addItemToOrderSchema, request.body);
+
+            if (!bodyValidation.success) {
+                const response = validationError(bodyValidation.errors);
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            if (typeof quantity !== 'number' || quantity <= 0) {
-                const response = badRequest(
-                    'quantity must be a positive number',
-                );
-                return reply.status(response.statusCode).send(response.body);
-            }
+            const { id: orderId } = paramsValidation.data;
+            const { code, quantity, observations, name } = bodyValidation.data;
 
             // Executa o UseCase
             const orderUpdated = await this.addItemToOrderUseCase.execute({
