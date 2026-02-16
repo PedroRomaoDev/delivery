@@ -182,14 +182,15 @@ describe('Order Aggregate', () => {
             });
 
             const payment = {
-                method: 'CREDIT_CARD',
+                origin: 'CREDIT_CARD',
                 value: 179.8,
+                prepaid: true,
             };
 
             const addedPayment = order.addPayment(payment);
 
-            expect(addedPayment.id).toBeDefined();
-            expect(addedPayment.method).toBe('CREDIT_CARD');
+            expect(addedPayment.prepaid).toBe(true);
+            expect(addedPayment.origin).toBe('CREDIT_CARD');
             expect(addedPayment.value).toBe(179.8);
             expect(order.payments).toHaveLength(1);
         });
@@ -201,7 +202,7 @@ describe('Order Aggregate', () => {
             });
             order.status = 'RECEIVED';
 
-            const payment = { method: 'PIX', value: 100.0 };
+            const payment = { origin: 'PIX', value: 100.0 };
 
             expect(() => order.addPayment(payment)).toThrow(
                 'Cannot add payments to order that is not in DRAFT status',
@@ -214,8 +215,8 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
 
-            expect(() => order.addPayment({ method: 'PIX' })).toThrow(
-                'Payment must have method and value',
+            expect(() => order.addPayment({ origin: 'PIX' })).toThrow(
+                'Payment must have origin and value',
             );
         });
     });
@@ -339,8 +340,8 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
 
-            order.addPayment({ method: 'CREDIT_CARD', value: 100.0 });
-            order.addPayment({ method: 'PIX', value: 30.0 });
+            order.addPayment({ origin: 'CREDIT_CARD', value: 100.0 });
+            order.addPayment({ origin: 'PIX', value: 30.0 });
 
             expect(order.getTotalPayments()).toBe(130.0);
         });
@@ -362,7 +363,7 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
-            order.addPayment({ method: 'PIX', value: 50.0 });
+            order.addPayment({ origin: 'PIX', value: 50.0 });
 
             expect(order.isComplete()).toBe(false);
         });
@@ -390,7 +391,7 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
-            order.addPayment({ method: 'PIX', value: 30.0 });
+            order.addPayment({ origin: 'PIX', value: 30.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
                 number: '1',
@@ -408,7 +409,7 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
-            order.addPayment({ method: 'PIX', value: 50.0 });
+            order.addPayment({ origin: 'PIX', value: 50.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
                 number: '1',
@@ -441,7 +442,7 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
-            order.addPayment({ method: 'PIX', value: 50.0 });
+            order.addPayment({ origin: 'PIX', value: 50.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
                 number: '1',
@@ -459,7 +460,7 @@ describe('Order Aggregate', () => {
                 phone: '11987654321',
             });
             order.addItem({ code: 1, quantity: 1, price: 50.0 });
-            order.addPayment({ method: 'PIX', value: 30.0 });
+            order.addPayment({ origin: 'PIX', value: 30.0 });
             order.setDeliveryAddress({
                 street: 'Rua A',
                 number: '1',
