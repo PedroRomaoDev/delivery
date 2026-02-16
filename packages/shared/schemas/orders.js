@@ -36,7 +36,7 @@ export const createOrderSchema = z.object({
 // Schema para adicionar item ao pedido
 export const addItemToOrderSchema = z.object({
     code: z
-        .string({
+        .number({
             required_error: 'code is required',
             invalid_type_error: 'code must be a string',
         })

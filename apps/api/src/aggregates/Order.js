@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { DEFAULT_STORE_NAME } from '../config/constants.js';
 
 class Order {
     /**
@@ -264,6 +265,10 @@ class Order {
                     name: this.customer.name,
                 },
                 last_status_name: this.status,
+                store: {
+                    name: DEFAULT_STORE_NAME,
+                    id: this.storeId,
+                },
                 items: this.items,
                 payments: this.payments,
                 delivery_address: this.deliveryAddress,

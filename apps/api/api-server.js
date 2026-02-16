@@ -211,6 +211,13 @@ app.route({
                                 },
                             },
                             last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    id: { type: 'string' },
+                                },
+                            },
                             items: { type: 'array', items: {} },
                             payments: { type: 'array', items: {} },
                             delivery_address: { type: ['object', 'null'] },
@@ -300,6 +307,13 @@ app.route({
                                 },
                             },
                             last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    id: { type: 'string' },
+                                },
+                            },
                             items: {
                                 type: 'array',
                                 items: {
