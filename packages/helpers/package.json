@@ -1,0 +1,11 @@
+{
+    "name": "@delivery/helpers",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "http.js",
+    "exports": {
+        "./http.js": "./http.js",
+        "./validate.js": "./validate.js",
+        "./generateRandomPrice.js": "./generateRandomPrice.js"
+    }
+}
