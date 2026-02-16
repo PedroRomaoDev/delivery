@@ -165,14 +165,17 @@ app.route({
     schema: {
         tags: ['Orders'],
         summary: 'Criar novo pedido',
-        description: 'Cria um novo pedido no estado DRAFT',
+        description:
+            'Cria um novo pedido no estado DRAFT. O campo storeId é opcional e usa um valor padrão se não fornecido.',
         body: {
             type: 'object',
-            required: ['storeId', 'customer'],
+            required: ['customer'],
             properties: {
                 storeId: {
                     type: 'string',
-                    description: 'ID da loja',
+                    format: 'uuid',
+                    description:
+                        'ID da loja (opcional, usa valor padrão se não fornecido)',
                 },
                 customer: {
                     type: 'object',
