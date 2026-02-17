@@ -9,6 +9,8 @@ import {
     makeAddDeliveryAddressToOrderController,
     makeReceiveOrderController,
     makeConfirmOrderController,
+    makeDispatchOrderController,
+    makeDeliverOrderController,
 } from './src/factories/index.js';
 
 const app = fastify();
@@ -47,6 +49,8 @@ const addDeliveryAddressToOrderController =
     makeAddDeliveryAddressToOrderController();
 const receiveOrderController = makeReceiveOrderController();
 const confirmOrderController = makeConfirmOrderController();
+const dispatchOrderController = makeDispatchOrderController();
+const deliverOrderController = makeDeliverOrderController();
 
 app.route({
     method: 'POST',
@@ -675,16 +679,16 @@ app.route({
         tags: ['Transição de Estado'],
         summary: 'Recebe o pedido (transição de status DRAFT → RECEIVED)',
         description:
-            'Transitions an order from DRAFT to RECEIVED status. ' +
-            'Validates that the order is complete (has items, payment, delivery address, and totals match) ' +
-            'and in DRAFT status before receiving.',
+            'Transiciona um pedido do status DRAFT para RECEIVED. ' +
+            'Valida que o pedido está completo (possui itens, pagamento, endereço de entrega e totais correspondem) ' +
+            'e está no status DRAFT antes de receber.',
         params: {
             type: 'object',
             required: ['id'],
             properties: {
                 id: {
                     type: 'string',
-                    description: 'Order ID',
+                    description: 'ID do pedido',
                 },
             },
         },
@@ -799,15 +803,15 @@ app.route({
         tags: ['Transição de Estado'],
         summary: 'Confirmar pedido (transição de status RECEIVED → CONFIRMED)',
         description:
-            'Transitions an order from RECEIVED to CONFIRMED status. ' +
-            'Validates that the order is in RECEIVED status before confirming.',
+            'Transiciona um pedido do status RECEIVED para CONFIRMED. ' +
+            'Valida que o pedido está no status RECEIVED antes de confirmar.',
         params: {
             type: 'object',
             required: ['id'],
             properties: {
                 id: {
                     type: 'string',
-                    description: 'Order ID',
+                    description: 'ID do pedido',
                 },
             },
         },
@@ -912,6 +916,252 @@ app.route({
     },
     handler: async (request, reply) => {
         return confirmOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'POST',
+    url: '/orders/:id/dispatch',
+    schema: {
+        tags: ['Transição de Estado'],
+        summary: 'Enviar pedido (transição de status CONFIRMED → DISPATCHED)',
+        description:
+            'Transiciona um pedido do status CONFIRMED para DISPATCHED. ' +
+            'Valida que o pedido está no status CONFIRMED antes de despachar.',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    description: 'ID do pedido',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Order dispatched successfully',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            payments: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        payment_type: { type: 'string' },
+                                        payment_method: { type: 'string' },
+                                        value: { type: 'number' },
+                                    },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                },
+                            },
+                            total_price: { type: 'number' },
+                            items: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        quantity: { type: 'integer' },
+                                        unit_price: { type: 'number' },
+                                        total_price: { type: 'number' },
+                                    },
+                                },
+                            },
+                            created_at: { type: 'string' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        date: { type: 'string' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    phone: { type: 'string' },
+                                },
+                            },
+                            delivery_address: {
+                                type: 'object',
+                                properties: {
+                                    street: { type: 'string' },
+                                    number: { type: 'string' },
+                                    neighborhood: { type: 'string' },
+                                    city: { type: 'string' },
+                                    state: { type: 'string' },
+                                    zip_code: { type: 'string' },
+                                    coordinates: {
+                                        type: 'object',
+                                        properties: {
+                                            id: { type: 'integer' },
+                                            latitude: { type: 'number' },
+                                            longitude: { type: 'number' },
+                                        },
+                                    },
+                                },
+                            },
+                            order_id: { type: 'string' },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Validation error or business rule violation',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Internal server error',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return dispatchOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'POST',
+    url: '/orders/:id/deliver',
+    schema: {
+        tags: ['Transição de Estado'],
+        summary: 'Pedido entregue (transição de status DISPATCHED → DELIVERED)',
+        description:
+            'Transiciona um pedido do status DISPATCHED para DELIVERED. ' +
+            'Valida que o pedido está no status DISPATCHED antes de entregar.',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    description: 'ID do pedido',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Order delivered successfully',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            payments: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        payment_type: { type: 'string' },
+                                        payment_method: { type: 'string' },
+                                        value: { type: 'number' },
+                                    },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                },
+                            },
+                            total_price: { type: 'number' },
+                            items: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        quantity: { type: 'integer' },
+                                        unit_price: { type: 'number' },
+                                        total_price: { type: 'number' },
+                                    },
+                                },
+                            },
+                            created_at: { type: 'string' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        date: { type: 'string' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    phone: { type: 'string' },
+                                },
+                            },
+                            delivery_address: {
+                                type: 'object',
+                                properties: {
+                                    street: { type: 'string' },
+                                    number: { type: 'string' },
+                                    neighborhood: { type: 'string' },
+                                    city: { type: 'string' },
+                                    state: { type: 'string' },
+                                    zip_code: { type: 'string' },
+                                    coordinates: {
+                                        type: 'object',
+                                        properties: {
+                                            id: { type: 'integer' },
+                                            latitude: { type: 'number' },
+                                            longitude: { type: 'number' },
+                                        },
+                                    },
+                                },
+                            },
+                            order_id: { type: 'string' },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Validation error or business rule violation',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Internal server error',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return deliverOrderController.handle(request, reply);
     },
 });
 
