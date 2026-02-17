@@ -59,7 +59,7 @@ export const orderIdParamSchema = z.object({
             required_error: 'orderId is required',
             invalid_type_error: 'orderId must be a string',
         })
-        .min(1, 'orderId cannot be empty'),
+        .uuid('orderId must be a valid UUID'),
 });
 
 // Formas de pagamento aceitas
