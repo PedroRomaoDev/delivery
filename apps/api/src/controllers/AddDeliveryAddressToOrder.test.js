@@ -25,7 +25,7 @@ describe('AddDeliveryAddressToOrderController', () => {
 
         // Base request object
         request = {
-            params: { id: 'order-123' },
+            params: { id: '550e8400-e29b-41d4-a716-446655440000' },
             body: {
                 street_name: 'Rua das Flores',
                 street_number: '123',
@@ -40,8 +40,8 @@ describe('AddDeliveryAddressToOrderController', () => {
     describe('handle', () => {
         it('should add delivery address successfully', async () => {
             const mockOrderData = {
-                order_id: 'order-123',
-                store_id: 'store-123',
+                order_id: '550e8400-e29b-41d4-a716-446655440000',
+                store_id: '660e8400-e29b-41d4-a716-446655440000',
                 order: {
                     delivery_address: {
                         street_name: 'Rua das Flores',
@@ -70,7 +70,7 @@ describe('AddDeliveryAddressToOrderController', () => {
             expect(
                 addDeliveryAddressToOrderUseCase.execute,
             ).toHaveBeenCalledWith({
-                orderId: 'order-123',
+                orderId: '550e8400-e29b-41d4-a716-446655440000',
                 address: {
                     street_name: 'Rua das Flores',
                     street_number: '123',
@@ -193,8 +193,8 @@ describe('AddDeliveryAddressToOrderController', () => {
             request.body.neighborhood = 'Bela Vista';
 
             const mockOrderData = {
-                order_id: 'order-123',
-                store_id: 'store-123',
+                order_id: '550e8400-e29b-41d4-a716-446655440000',
+                store_id: '660e8400-e29b-41d4-a716-446655440000',
                 order: {
                     delivery_address: {
                         ...request.body,
@@ -213,7 +213,7 @@ describe('AddDeliveryAddressToOrderController', () => {
             expect(
                 addDeliveryAddressToOrderUseCase.execute,
             ).toHaveBeenCalledWith({
-                orderId: 'order-123',
+                orderId: '550e8400-e29b-41d4-a716-446655440000',
                 address: expect.objectContaining({
                     neighborhood: 'Bela Vista',
                 }),
@@ -226,8 +226,8 @@ describe('AddDeliveryAddressToOrderController', () => {
             request.body.reference = 'Próximo ao parque';
 
             const mockOrderData = {
-                order_id: 'order-123',
-                store_id: 'store-123',
+                order_id: '550e8400-e29b-41d4-a716-446655440000',
+                store_id: '660e8400-e29b-41d4-a716-446655440000',
                 order: {
                     delivery_address: {
                         ...request.body,
@@ -246,7 +246,7 @@ describe('AddDeliveryAddressToOrderController', () => {
             expect(
                 addDeliveryAddressToOrderUseCase.execute,
             ).toHaveBeenCalledWith({
-                orderId: 'order-123',
+                orderId: '550e8400-e29b-41d4-a716-446655440000',
                 address: expect.objectContaining({
                     reference: 'Próximo ao parque',
                 }),
@@ -263,8 +263,8 @@ describe('AddDeliveryAddressToOrderController', () => {
             };
 
             const mockOrderData = {
-                order_id: 'order-123',
-                store_id: 'store-123',
+                order_id: '550e8400-e29b-41d4-a716-446655440000',
+                store_id: '660e8400-e29b-41d4-a716-446655440000',
                 order: {
                     delivery_address: {
                         ...request.body,
@@ -283,7 +283,7 @@ describe('AddDeliveryAddressToOrderController', () => {
             expect(
                 addDeliveryAddressToOrderUseCase.execute,
             ).toHaveBeenCalledWith({
-                orderId: 'order-123',
+                orderId: '550e8400-e29b-41d4-a716-446655440000',
                 address: expect.objectContaining({
                     coordinates: {
                         latitude: -20.0,
