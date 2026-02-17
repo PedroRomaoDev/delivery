@@ -3,3 +3,6 @@ export * from './controllers/CreateOrder.js';
 export * from './controllers/AddItemToOrder.js';
 export * from './controllers/AddPaymentToOrder.js';
 export * from './controllers/AddDeliveryAddressToOrder.js';
+export * from './controllers/ReceiveOrder.js';
+export * from './controllers/ConfirmOrder.js';
+export * from './controllers/ConfirmOrder.js';
