@@ -83,6 +83,14 @@ class Order {
     }
 
     /**
+     * Verifica se o pedido está em estado RECEIVED
+     * @returns {boolean}
+     */
+    isReceived() {
+        return this.status === 'RECEIVED';
+    }
+
+    /**
      * Adiciona um item ao pedido (apenas em DRAFT)
      * @param {Object} item - Item a ser adicionado
      * @param {number} item.code - Código do produto
@@ -279,6 +287,38 @@ class Order {
             created_at: new Date().getTime(),
             origin: origin,
         });
+    }
+
+    /**
+     * Recebe o pedido (transição DRAFT → RECEIVED)
+     * @throws {Error} Se o pedido não estiver em DRAFT
+     * @throws {Error} Se o pedido não estiver completo
+     */
+    receive() {
+        if (!this.isDraft()) {
+            throw new Error('Only orders in DRAFT status can be received');
+        }
+
+        if (!this.isComplete()) {
+            const missing = this.getMissingSteps();
+            throw new Error(
+                `Order is not complete. Missing: ${missing.join(', ')}`,
+            );
+        }
+
+        this.addStatusToHistory('RECEIVED', 'CUSTOMER');
+    }
+
+    /**
+     * Confirma o pedido (transição RECEIVED → CONFIRMED)
+     * @throws {Error} Se o pedido não estiver em RECEIVED
+     */
+    confirm() {
+        if (!this.isReceived()) {
+            throw new Error('Only orders in RECEIVED status can be confirmed');
+        }
+
+        this.addStatusToHistory('CONFIRMED', 'STORE');
     }
 
     /**
