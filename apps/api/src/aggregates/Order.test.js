@@ -703,4 +703,95 @@ describe('Order Aggregate', () => {
             );
         });
     });
+
+    describe('dispatch', () => {
+        it('should dispatch a CONFIRMED order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 1, quantity: 1, price: 100.0 });
+            order.addPayment({
+                type: 'PIX',
+                method: 'PIX',
+                value: 100.0,
+                origin: 'PIX',
+            });
+            order.setDeliveryAddress({
+                street_name: 'Rua Teste',
+                street_number: '123',
+                city: 'São Paulo',
+                state: 'SP',
+                postal_code: '01000-000',
+                country: 'BR',
+            });
+            order.receive();
+            order.confirm();
+
+            order.dispatch();
+
+            expect(order.status).toBe('DISPATCHED');
+            expect(order.statuses).toHaveLength(4);
+            expect(order.statuses[3].name).toBe('DISPATCHED');
+            expect(order.statuses[3].origin).toBe('STORE');
+        });
+
+        it('should throw error when order is not in CONFIRMED status', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.dispatch()).toThrow(
+                'Only orders in CONFIRMED status can be dispatched',
+            );
+        });
+    });
+
+    describe('deliver', () => {
+        it('should deliver a DISPATCHED order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 1, quantity: 1, price: 100.0 });
+            order.addPayment({
+                type: 'PIX',
+                method: 'PIX',
+                value: 100.0,
+                origin: 'PIX',
+            });
+            order.setDeliveryAddress({
+                street_name: 'Rua Teste',
+                street_number: '123',
+                city: 'São Paulo',
+                state: 'SP',
+                postal_code: '01000-000',
+                country: 'BR',
+            });
+            order.receive();
+            order.confirm();
+            order.dispatch();
+
+            order.deliver();
+
+            expect(order.status).toBe('DELIVERED');
+            expect(order.statuses).toHaveLength(5);
+            expect(order.statuses[4].name).toBe('DELIVERED');
+            expect(order.statuses[4].origin).toBe('STORE');
+        });
+
+        it('should throw error when order is not in DISPATCHED status', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.deliver()).toThrow(
+                'Only orders in DISPATCHED status can be delivered',
+            );
+        });
+    });
 });
