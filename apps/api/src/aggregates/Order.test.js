@@ -226,7 +226,7 @@ describe('Order Aggregate', () => {
             );
         });
 
-        it('should throw error when trying to add a second payment', () => {
+        it('should replace existing payment when adding a second payment', () => {
             const order = new Order('store-123', {
                 name: 'João Silva',
                 phone: '11987654321',
@@ -239,16 +239,22 @@ describe('Order Aggregate', () => {
                 prepaid: true,
             });
 
-            // Tenta adicionar um segundo pagamento
-            expect(() =>
-                order.addPayment({
-                    origin: 'CREDIT_CARD',
-                    value: 50.0,
-                    prepaid: true,
-                }),
-            ).toThrow(
-                'Order already has a payment. Only one payment is allowed per order',
-            );
+            expect(order.payments).toHaveLength(1);
+            expect(order.payments[0].origin).toBe('PIX');
+            expect(order.payments[0].value).toBe(100.0);
+
+            // Adiciona um segundo pagamento (deve sobrescrever o primeiro)
+            order.addPayment({
+                origin: 'CREDIT_CARD',
+                value: 50.0,
+                prepaid: false,
+            });
+
+            // Verifica que só tem um payment e é o segundo
+            expect(order.payments).toHaveLength(1);
+            expect(order.payments[0].origin).toBe('CREDIT_CARD');
+            expect(order.payments[0].value).toBe(50.0);
+            expect(order.payments[0].prepaid).toBe(false);
         });
     });
 

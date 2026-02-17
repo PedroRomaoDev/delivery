@@ -263,7 +263,7 @@ describe('AddPaymentToOrderUseCase', () => {
         ).rejects.toThrow('Order must have items before adding payment');
     });
 
-    it('should throw error when order already has a payment', async () => {
+    it('should replace existing payment when order already has one', async () => {
         const orderWithPayment = {
             store_id: 'store-123',
             order_id: 'order-123',
@@ -298,13 +298,48 @@ describe('AddPaymentToOrderUseCase', () => {
 
         findOrderByIdRepository.execute.mockResolvedValue(orderWithPayment);
 
-        await expect(
-            addPaymentToOrderUseCase.execute({
-                orderId: 'order-123',
-                origin: 'CREDIT_CARD',
+        addPaymentToOrderRepository.execute.mockResolvedValue({
+            ...orderWithPayment,
+            order: {
+                ...orderWithPayment.order,
+                payments: [
+                    {
+                        prepaid: true,
+                        value: 50.0,
+                        origin: 'CREDIT_CARD',
+                    },
+                ],
+            },
+        });
+
+        const result = await addPaymentToOrderUseCase.execute({
+            orderId: 'order-123',
+            origin: 'CREDIT_CARD',
+            prepaid: true,
+        });
+
+        // Verifica que o payment foi sobrescrito
+        expect(result.order.payments).toHaveLength(1);
+        expect(result.order.payments[0]).toEqual({
+            prepaid: true,
+            value: 50.0,
+            origin: 'CREDIT_CARD',
+        });
+
+        // Verifica que o repository foi chamado
+        expect(addPaymentToOrderRepository.execute).toHaveBeenCalledWith(
+            expect.objectContaining({
+                order_id: 'order-123',
+                order: expect.objectContaining({
+                    payments: [
+                        {
+                            prepaid: true,
+                            value: 50.0,
+                            origin: 'CREDIT_CARD',
+                        },
+                    ],
+                }),
             }),
-        ).rejects.toThrow(
-            'Order already has a payment. Only one payment is allowed per order',
         );
     });
 
