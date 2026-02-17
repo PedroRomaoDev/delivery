@@ -126,6 +126,19 @@ describe('AddPaymentToOrderController', () => {
         });
     });
 
+    it('should return 400 when order has no items', async () => {
+        addPaymentToOrderUseCase.execute.mockRejectedValue(
+            new Error('Order must have items before adding payment'),
+        );
+
+        await addPaymentToOrderController.handle(request, reply);
+
+        expect(reply.status).toHaveBeenCalledWith(400);
+        expect(reply.send).toHaveBeenCalledWith({
+            message: 'Order must have items before adding payment',
+        });
+    });
+
     it('should return 500 on unexpected errors', async () => {
         addPaymentToOrderUseCase.execute.mockRejectedValue(
             new Error('Unexpected error'),
