@@ -36,7 +36,18 @@ describe('AddDeliveryAddressToOrderUseCase', () => {
                 store_id: 'store-123',
                 customer: { name: 'João', phone: '11987654321' },
                 last_status_name: 'DRAFT',
-                items: [],
+                items: [
+                    {
+                        code: 123,
+                        price: 50.0,
+                        quantity: 1,
+                        total_price: 50.0,
+                        name: 'Product',
+                        observations: null,
+                        discount: 0,
+                        condiments: [],
+                    },
+                ],
                 payments: [{ origin: 'PIX', value: 50.0, prepaid: true }],
                 delivery_address: null,
                 created_at: Date.now(),
@@ -44,11 +55,28 @@ describe('AddDeliveryAddressToOrderUseCase', () => {
                     store_id: 'store-123',
                     customer: { name: 'João', temporary_phone: '11987654321' },
                     last_status_name: 'DRAFT',
-                    items: [],
+                    items: [
+                        {
+                            code: 123,
+                            price: 50.0,
+                            quantity: 1,
+                            total_price: 50.0,
+                            name: 'Product',
+                            observations: null,
+                            discount: 0,
+                            condiments: [],
+                        },
+                    ],
                     payments: [{ origin: 'PIX', value: 50.0, prepaid: true }],
                     delivery_address: null,
                     created_at: Date.now(),
-                    statuses: [],
+                    statuses: [
+                        {
+                            name: 'DRAFT',
+                            created_at: Date.now(),
+                            origin: 'CUSTOMER',
+                        },
+                    ],
                 },
             };
 
@@ -188,6 +216,56 @@ describe('AddDeliveryAddressToOrderUseCase', () => {
             expect(result.order.delivery_address.street_name).toBe(
                 'Rua Inexistente',
             );
+        });
+
+        it('should keep order in DRAFT when incomplete (no items)', async () => {
+            const orderData = {
+                order_id: 'order-123',
+                store_id: 'store-123',
+                customer: { name: 'João', phone: '11987654321' },
+                last_status_name: 'DRAFT',
+                items: [], // Sem items - pedido incompleto
+                payments: [{ origin: 'PIX', value: 50.0, prepaid: true }],
+                delivery_address: null,
+                created_at: Date.now(),
+                order: {
+                    store_id: 'store-123',
+                    customer: { name: 'João', temporary_phone: '11987654321' },
+                    last_status_name: 'DRAFT',
+                    items: [],
+                    payments: [{ origin: 'PIX', value: 50.0, prepaid: true }],
+                    delivery_address: null,
+                    created_at: Date.now(),
+                    statuses: [
+                        {
+                            name: 'DRAFT',
+                            created_at: Date.now(),
+                            origin: 'CUSTOMER',
+                        },
+                    ],
+                },
+            };
+
+            findOrderByIdRepository.execute.mockResolvedValue(orderData);
+
+            const address = {
+                street_name: 'Rua das Flores',
+                street_number: '123',
+                city: 'São Paulo',
+                state: 'SP',
+                postal_code: '01234-567',
+                country: 'BR',
+            };
+
+            const result = await useCase.execute({
+                orderId: 'order-123',
+                address,
+            });
+
+            // Deve permanecer DRAFT pois não há items
+            expect(result.order.last_status_name).toBe('DRAFT');
+            expect(result.order.statuses).toHaveLength(1);
+            expect(result.order.statuses[0].name).toBe('DRAFT');
         });
 
         it('should throw error when order not found', async () => {

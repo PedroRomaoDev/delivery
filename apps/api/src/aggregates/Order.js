@@ -102,7 +102,7 @@ class Order {
             throw new Error('Item must have code, quantity and price');
         }
 
-        const totalPrice = item.price * item.quantity;
+        const totalPrice = parseFloat((item.price * item.quantity).toFixed(2));
 
         const newItem = {
             code: item.code,
@@ -139,7 +139,7 @@ class Order {
 
         const newPayment = {
             prepaid: payment.prepaid !== undefined ? payment.prepaid : true,
-            value: payment.value,
+            value: parseFloat(payment.value.toFixed(2)),
             origin: payment.origin,
         };
 
@@ -199,9 +199,10 @@ class Order {
      * @returns {number}
      */
     getTotalItems() {
-        return this.items.reduce((total, item) => {
+        const total = this.items.reduce((total, item) => {
             return total + item.price * item.quantity;
         }, 0);
+        return parseFloat(total.toFixed(2));
     }
 
     /**
@@ -209,9 +210,10 @@ class Order {
      * @returns {number}
      */
     getTotalPayments() {
-        return this.payments.reduce((total, payment) => {
+        const total = this.payments.reduce((total, payment) => {
             return total + payment.value;
         }, 0);
+        return parseFloat(total.toFixed(2));
     }
 
     /**
@@ -288,21 +290,21 @@ class Order {
             store_id: this.storeId,
             order_id: this.id,
             order: {
-                customer: {
-                    temporary_phone: this.customer.phone,
-                    name: this.customer.name,
-                },
+                payments: this.payments,
                 last_status_name: this.status,
                 store: {
                     name: DEFAULT_STORE_NAME,
                     id: this.storeId,
                 },
-                items: this.items,
-                payments: this.payments,
-                delivery_address: this.deliveryAddress,
-                created_at: new Date(this.createdAt).getTime(),
                 total_price: this.getTotalItems(),
+                items: this.items,
+                created_at: new Date(this.createdAt).getTime(),
                 statuses: this.statuses,
+                customer: {
+                    temporary_phone: this.customer.phone,
+                    name: this.customer.name,
+                },
+                delivery_address: this.deliveryAddress,
             },
         };
     }

@@ -83,7 +83,6 @@ app.route({
                                     },
                                 },
                                 total_price: { type: 'number' },
-                                order_id: { type: 'string' },
                                 items: {
                                     type: 'array',
                                     items: {
@@ -207,13 +206,7 @@ app.route({
                     order: {
                         type: 'object',
                         properties: {
-                            customer: {
-                                type: 'object',
-                                properties: {
-                                    temporary_phone: { type: 'string' },
-                                    name: { type: 'string' },
-                                },
-                            },
+                            payments: { type: 'array', items: {} },
                             last_status_name: { type: 'string' },
                             store: {
                                 type: 'object',
@@ -222,11 +215,9 @@ app.route({
                                     id: { type: 'string' },
                                 },
                             },
-                            items: { type: 'array', items: {} },
-                            payments: { type: 'array', items: {} },
-                            delivery_address: { type: ['object', 'null'] },
-                            created_at: { type: 'number' },
                             total_price: { type: 'number' },
+                            items: { type: 'array', items: {} },
+                            created_at: { type: 'number' },
                             statuses: {
                                 type: 'array',
                                 items: {
@@ -238,6 +229,14 @@ app.route({
                                     },
                                 },
                             },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
+                            delivery_address: { type: ['object', 'null'] },
                         },
                     },
                 },
@@ -314,13 +313,7 @@ app.route({
                     order: {
                         type: 'object',
                         properties: {
-                            customer: {
-                                type: 'object',
-                                properties: {
-                                    temporary_phone: { type: 'string' },
-                                    name: { type: 'string' },
-                                },
-                            },
+                            payments: { type: 'array', items: {} },
                             last_status_name: { type: 'string' },
                             store: {
                                 type: 'object',
@@ -329,6 +322,7 @@ app.route({
                                     id: { type: 'string' },
                                 },
                             },
+                            total_price: { type: 'number' },
                             items: {
                                 type: 'array',
                                 items: {
@@ -350,10 +344,7 @@ app.route({
                                     },
                                 },
                             },
-                            payments: { type: 'array', items: {} },
-                            delivery_address: { type: ['object', 'null'] },
                             created_at: { type: 'number' },
-                            total_price: { type: 'number' },
                             statuses: {
                                 type: 'array',
                                 items: {
@@ -365,6 +356,14 @@ app.route({
                                     },
                                 },
                             },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
+                            delivery_address: { type: ['object', 'null'] },
                         },
                     },
                 },
@@ -435,22 +434,6 @@ app.route({
                     order: {
                         type: 'object',
                         properties: {
-                            customer: {
-                                type: 'object',
-                                properties: {
-                                    temporary_phone: { type: 'string' },
-                                    name: { type: 'string' },
-                                },
-                            },
-                            last_status_name: { type: 'string' },
-                            store: {
-                                type: 'object',
-                                properties: {
-                                    name: { type: 'string' },
-                                    id: { type: 'string' },
-                                },
-                            },
-                            items: { type: 'array', items: {} },
                             payments: {
                                 type: 'array',
                                 items: {
@@ -462,9 +445,17 @@ app.route({
                                     },
                                 },
                             },
-                            delivery_address: { type: ['object', 'null'] },
-                            created_at: { type: 'number' },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    id: { type: 'string' },
+                                },
+                            },
                             total_price: { type: 'number' },
+                            items: { type: 'array', items: {} },
+                            created_at: { type: 'number' },
                             statuses: {
                                 type: 'array',
                                 items: {
@@ -476,6 +467,14 @@ app.route({
                                     },
                                 },
                             },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
+                            delivery_address: { type: ['object', 'null'] },
                         },
                     },
                 },
@@ -585,13 +584,7 @@ app.route({
                     order: {
                         type: 'object',
                         properties: {
-                            customer: {
-                                type: 'object',
-                                properties: {
-                                    temporary_phone: { type: 'string' },
-                                    name: { type: 'string' },
-                                },
-                            },
+                            payments: { type: 'array', items: {} },
                             last_status_name: { type: 'string' },
                             store: {
                                 type: 'object',
@@ -600,8 +593,27 @@ app.route({
                                     id: { type: 'string' },
                                 },
                             },
+                            total_price: { type: 'number' },
                             items: { type: 'array', items: {} },
-                            payments: { type: 'array', items: {} },
+                            created_at: { type: 'number' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        name: { type: 'string' },
+                                        created_at: { type: 'number' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
                             delivery_address: {
                                 type: 'object',
                                 properties: {
@@ -622,19 +634,6 @@ app.route({
                                             longitude: { type: 'number' },
                                             id: { type: 'number' },
                                         },
-                                    },
-                                },
-                            },
-                            created_at: { type: 'number' },
-                            total_price: { type: 'number' },
-                            statuses: {
-                                type: 'array',
-                                items: {
-                                    type: 'object',
-                                    properties: {
-                                        name: { type: 'string' },
-                                        created_at: { type: 'number' },
-                                        origin: { type: 'string' },
                                     },
                                 },
                             },

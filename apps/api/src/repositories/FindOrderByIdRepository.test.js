@@ -8,6 +8,10 @@ describe('FindOrderByIdRepository', () => {
     beforeEach(async () => {
         tempFilePath = path.join(process.cwd(), 'src/data/pedidos-test.json');
 
+        // Garante que o diretório existe
+        const dirPath = path.dirname(tempFilePath);
+        await fs.mkdir(dirPath, { recursive: true });
+
         // Remove arquivo se já existir
         try {
             await fs.unlink(tempFilePath);
