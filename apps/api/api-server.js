@@ -7,6 +7,8 @@ import {
     makeAddItemToOrderController,
     makeAddPaymentToOrderController,
     makeAddDeliveryAddressToOrderController,
+    makeReceiveOrderController,
+    makeConfirmOrderController,
 } from './src/factories/index.js';
 
 const app = fastify();
@@ -43,130 +45,14 @@ const addItemToOrderController = makeAddItemToOrderController();
 const addPaymentToOrderController = makeAddPaymentToOrderController();
 const addDeliveryAddressToOrderController =
     makeAddDeliveryAddressToOrderController();
+const receiveOrderController = makeReceiveOrderController();
+const confirmOrderController = makeConfirmOrderController();
 
-app.route({
-    method: 'GET',
-    url: '/orders',
-    schema: {
-        tags: ['Orders'],
-        summary: 'Buscar todos os pedidos',
-        description: 'Retorna a lista completa de pedidos cadastrados',
-        response: {
-            200: {
-                description: 'Lista de pedidos retornada com sucesso',
-                type: 'array',
-                items: {
-                    type: 'object',
-                    properties: {
-                        store_id: { type: 'string' },
-                        order_id: { type: 'string' },
-                        order: {
-                            type: 'object',
-                            properties: {
-                                payments: {
-                                    type: 'array',
-                                    items: {
-                                        type: 'object',
-                                        properties: {
-                                            prepaid: { type: 'boolean' },
-                                            value: { type: 'number' },
-                                            origin: { type: 'string' },
-                                        },
-                                    },
-                                },
-                                last_status_name: { type: 'string' },
-                                store: {
-                                    type: 'object',
-                                    properties: {
-                                        name: { type: 'string' },
-                                        id: { type: 'string' },
-                                    },
-                                },
-                                total_price: { type: 'number' },
-                                items: {
-                                    type: 'array',
-                                    items: {
-                                        type: 'object',
-                                        properties: {
-                                            code: { type: 'number' },
-                                            price: { type: 'number' },
-                                            observations: {
-                                                type: ['string', 'null'],
-                                            },
-                                            total_price: { type: 'number' },
-                                            name: { type: 'string' },
-                                            quantity: { type: 'number' },
-                                            discount: { type: 'number' },
-                                            condiments: {
-                                                type: 'array',
-                                                items: {},
-                                            },
-                                        },
-                                    },
-                                },
-                                created_at: { type: 'number' },
-                                statuses: {
-                                    type: 'array',
-                                    items: {
-                                        type: 'object',
-                                        properties: {
-                                            created_at: { type: 'number' },
-                                            name: { type: 'string' },
-                                            origin: { type: 'string' },
-                                        },
-                                    },
-                                },
-                                customer: {
-                                    type: 'object',
-                                    properties: {
-                                        temporary_phone: { type: 'string' },
-                                        name: { type: 'string' },
-                                    },
-                                },
-                                delivery_address: {
-                                    type: 'object',
-                                    properties: {
-                                        reference: { type: 'string' },
-                                        street_name: { type: 'string' },
-                                        postal_code: { type: 'string' },
-                                        country: { type: 'string' },
-                                        city: { type: 'string' },
-                                        neighborhood: { type: 'string' },
-                                        street_number: { type: 'string' },
-                                        state: { type: 'string' },
-                                        coordinates: {
-                                            type: 'object',
-                                            properties: {
-                                                longitude: { type: 'number' },
-                                                latitude: { type: 'number' },
-                                                id: { type: 'number' },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            500: {
-                description: 'Erro interno do servidor',
-                type: 'object',
-                properties: {
-                    message: { type: 'string' },
-                },
-            },
-        },
-    },
-    handler: async (request, reply) => {
-        return findAllOrdersController.execute(request, reply);
-    },
-});
 app.route({
     method: 'POST',
     url: '/orders',
     schema: {
-        tags: ['Orders'],
+        tags: ['Criação de Pedido'],
         summary: 'Criar novo pedido',
         description:
             'Cria um novo pedido no estado DRAFT. O campo storeId é opcional e usa um valor padrão se não fornecido.',
@@ -266,7 +152,7 @@ app.route({
     method: 'POST',
     url: '/orders/:id/items',
     schema: {
-        tags: ['Orders'],
+        tags: ['Criação de Pedido'],
         summary: 'Adicionar item ao pedido',
         description:
             'Adiciona um novo item a um pedido em estado DRAFT. O preço do item é gerado automaticamente.',
@@ -394,7 +280,7 @@ app.route({
     method: 'POST',
     url: '/orders/:id/payments',
     schema: {
-        tags: ['Orders'],
+        tags: ['Criação de Pedido'],
         summary: 'Adicionar pagamento ao pedido',
         description:
             'Adiciona um novo pagamento a um pedido em estado DRAFT. O valor do pagamento é calculado automaticamente baseado no total dos items.',
@@ -505,7 +391,7 @@ app.route({
     method: 'POST',
     url: '/orders/:id/delivery-address',
     schema: {
-        tags: ['Orders'],
+        tags: ['Criação de Pedido'],
         summary: 'Adicionar endereço de entrega ao pedido',
         description:
             'Adiciona ou atualiza o endereço de entrega de um pedido em estado DRAFT. As coordenadas geográficas (latitude/longitude) são calculadas automaticamente via geocoding (OpenStreetMap Nominatim) se não forem fornecidas.',
@@ -660,6 +546,372 @@ app.route({
     },
     handler: async (request, reply) => {
         return addDeliveryAddressToOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'GET',
+    url: '/orders',
+    schema: {
+        tags: ['Consulta de Pedidos'],
+        summary: 'Buscar todos os pedidos',
+        description: 'Retorna a lista completa de pedidos cadastrados',
+        response: {
+            200: {
+                description: 'Lista de pedidos retornada com sucesso',
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        store_id: { type: 'string' },
+                        order_id: { type: 'string' },
+                        order: {
+                            type: 'object',
+                            properties: {
+                                payments: {
+                                    type: 'array',
+                                    items: {
+                                        type: 'object',
+                                        properties: {
+                                            prepaid: { type: 'boolean' },
+                                            value: { type: 'number' },
+                                            origin: { type: 'string' },
+                                        },
+                                    },
+                                },
+                                last_status_name: { type: 'string' },
+                                store: {
+                                    type: 'object',
+                                    properties: {
+                                        name: { type: 'string' },
+                                        id: { type: 'string' },
+                                    },
+                                },
+                                total_price: { type: 'number' },
+                                items: {
+                                    type: 'array',
+                                    items: {
+                                        type: 'object',
+                                        properties: {
+                                            code: { type: 'number' },
+                                            price: { type: 'number' },
+                                            observations: {
+                                                type: ['string', 'null'],
+                                            },
+                                            total_price: { type: 'number' },
+                                            name: { type: 'string' },
+                                            quantity: { type: 'number' },
+                                            discount: { type: 'number' },
+                                            condiments: {
+                                                type: 'array',
+                                                items: {},
+                                            },
+                                        },
+                                    },
+                                },
+                                created_at: { type: 'number' },
+                                statuses: {
+                                    type: 'array',
+                                    items: {
+                                        type: 'object',
+                                        properties: {
+                                            created_at: { type: 'number' },
+                                            name: { type: 'string' },
+                                            origin: { type: 'string' },
+                                        },
+                                    },
+                                },
+                                customer: {
+                                    type: 'object',
+                                    properties: {
+                                        temporary_phone: { type: 'string' },
+                                        name: { type: 'string' },
+                                    },
+                                },
+                                delivery_address: {
+                                    type: 'object',
+                                    properties: {
+                                        reference: { type: 'string' },
+                                        street_name: { type: 'string' },
+                                        postal_code: { type: 'string' },
+                                        country: { type: 'string' },
+                                        city: { type: 'string' },
+                                        neighborhood: { type: 'string' },
+                                        street_number: { type: 'string' },
+                                        state: { type: 'string' },
+                                        coordinates: {
+                                            type: 'object',
+                                            properties: {
+                                                longitude: { type: 'number' },
+                                                latitude: { type: 'number' },
+                                                id: { type: 'number' },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            500: {
+                description: 'Erro interno do servidor',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return findAllOrdersController.execute(request, reply);
+    },
+});
+
+app.route({
+    method: 'POST',
+    url: '/orders/:id/receive',
+    schema: {
+        tags: ['Transição de Estado'],
+        summary: 'Recebe o pedido (transição de status DRAFT → RECEIVED)',
+        description:
+            'Transitions an order from DRAFT to RECEIVED status. ' +
+            'Validates that the order is complete (has items, payment, delivery address, and totals match) ' +
+            'and in DRAFT status before receiving.',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    description: 'Order ID',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Order received successfully',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            payments: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        payment_type: { type: 'string' },
+                                        payment_method: { type: 'string' },
+                                        value: { type: 'number' },
+                                    },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                },
+                            },
+                            total_price: { type: 'number' },
+                            items: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        quantity: { type: 'integer' },
+                                        unit_price: { type: 'number' },
+                                        total_price: { type: 'number' },
+                                    },
+                                },
+                            },
+                            created_at: { type: 'string' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        date: { type: 'string' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    phone: { type: 'string' },
+                                },
+                            },
+                            delivery_address: {
+                                type: 'object',
+                                properties: {
+                                    street: { type: 'string' },
+                                    number: { type: 'string' },
+                                    neighborhood: { type: 'string' },
+                                    city: { type: 'string' },
+                                    state: { type: 'string' },
+                                    zip_code: { type: 'string' },
+                                    coordinates: {
+                                        type: 'object',
+                                        properties: {
+                                            id: { type: 'integer' },
+                                            latitude: { type: 'number' },
+                                            longitude: { type: 'number' },
+                                        },
+                                    },
+                                },
+                            },
+                            order_id: { type: 'string' },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Validation error or business rule violation',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Internal server error',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return receiveOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'POST',
+    url: '/orders/:id/confirm',
+    schema: {
+        tags: ['Transição de Estado'],
+        summary: 'Confirmar pedido (transição de status RECEIVED → CONFIRMED)',
+        description:
+            'Transitions an order from RECEIVED to CONFIRMED status. ' +
+            'Validates that the order is in RECEIVED status before confirming.',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    description: 'Order ID',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Order confirmed successfully',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            payments: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        payment_type: { type: 'string' },
+                                        payment_method: { type: 'string' },
+                                        value: { type: 'number' },
+                                    },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                },
+                            },
+                            total_price: { type: 'number' },
+                            items: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        quantity: { type: 'integer' },
+                                        unit_price: { type: 'number' },
+                                        total_price: { type: 'number' },
+                                    },
+                                },
+                            },
+                            created_at: { type: 'string' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        date: { type: 'string' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    phone: { type: 'string' },
+                                },
+                            },
+                            delivery_address: {
+                                type: 'object',
+                                properties: {
+                                    street: { type: 'string' },
+                                    number: { type: 'string' },
+                                    neighborhood: { type: 'string' },
+                                    city: { type: 'string' },
+                                    state: { type: 'string' },
+                                    zip_code: { type: 'string' },
+                                    coordinates: {
+                                        type: 'object',
+                                        properties: {
+                                            id: { type: 'integer' },
+                                            latitude: { type: 'number' },
+                                            longitude: { type: 'number' },
+                                        },
+                                    },
+                                },
+                            },
+                            order_id: { type: 'string' },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Validation error or business rule violation',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Internal server error',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return confirmOrderController.handle(request, reply);
     },
 });
 
