@@ -91,6 +91,22 @@ class Order {
     }
 
     /**
+     * Verifica se o pedido está em estado CONFIRMED
+     * @returns {boolean}
+     */
+    isConfirmed() {
+        return this.status === 'CONFIRMED';
+    }
+
+    /**
+     * Verifica se o pedido está em estado DISPATCHED
+     * @returns {boolean}
+     */
+    isDispatched() {
+        return this.status === 'DISPATCHED';
+    }
+
+    /**
      * Adiciona um item ao pedido (apenas em DRAFT)
      * @param {Object} item - Item a ser adicionado
      * @param {number} item.code - Código do produto
@@ -319,6 +335,34 @@ class Order {
         }
 
         this.addStatusToHistory('CONFIRMED', 'STORE');
+    }
+
+    /**
+     * Despacha o pedido (transição CONFIRMED → DISPATCHED)
+     * @throws {Error} Se o pedido não estiver em CONFIRMED
+     */
+    dispatch() {
+        if (!this.isConfirmed()) {
+            throw new Error(
+                'Only orders in CONFIRMED status can be dispatched',
+            );
+        }
+
+        this.addStatusToHistory('DISPATCHED', 'STORE');
+    }
+
+    /**
+     * Entrega o pedido (transição DISPATCHED → DELIVERED)
+     * @throws {Error} Se o pedido não estiver em DISPATCHED
+     */
+    deliver() {
+        if (!this.isDispatched()) {
+            throw new Error(
+                'Only orders in DISPATCHED status can be delivered',
+            );
+        }
+
+        this.addStatusToHistory('DELIVERED', 'STORE');
     }
 
     /**
