@@ -5,4 +5,6 @@ export * from './controllers/AddPaymentToOrder.js';
 export * from './controllers/AddDeliveryAddressToOrder.js';
 export * from './controllers/ReceiveOrder.js';
 export * from './controllers/ConfirmOrder.js';
+export * from './controllers/DispatchOrder.js';
+export * from './controllers/DeliverOrder.js';
 export * from './controllers/ConfirmOrder.js';
