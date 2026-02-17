@@ -585,4 +585,122 @@ describe('Order Aggregate', () => {
             expect(order.status).toBe('DISPATCHED');
         });
     });
+
+    describe('receive', () => {
+        it('should receive a complete order in DRAFT', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
+            order.addPayment({ origin: 'PIX', value: 50.0 });
+            order.setDeliveryAddress({
+                street_name: 'Rua A',
+                street_number: '1',
+                city: 'SP',
+                state: 'SP',
+                postal_code: '12345-678',
+                country: 'BR',
+            });
+
+            order.receive();
+
+            expect(order.status).toBe('RECEIVED');
+            expect(order.statuses).toHaveLength(2);
+            expect(order.statuses[1].name).toBe('RECEIVED');
+            expect(order.statuses[1].origin).toBe('CUSTOMER');
+        });
+
+        it('should throw error when order is not in DRAFT', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
+            order.addPayment({ origin: 'PIX', value: 50.0 });
+            order.setDeliveryAddress({
+                street_name: 'Rua A',
+                street_number: '1',
+                city: 'SP',
+                state: 'SP',
+                postal_code: '12345-678',
+                country: 'BR',
+            });
+
+            order.receive();
+
+            expect(() => order.receive()).toThrow(
+                'Only orders in DRAFT status can be received',
+            );
+        });
+
+        it('should throw error when order is not complete', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
+
+            expect(() => order.receive()).toThrow('Order is not complete');
+        });
+
+        it('should throw error with missing steps details', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 1, quantity: 1, price: 50.0 });
+
+            expect(() => order.receive()).toThrow('Set delivery address');
+            expect(() => order.receive()).toThrow('Add at least one payment');
+        });
+    });
+
+    describe('confirm', () => {
+        it('should confirm a RECEIVED order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 1, quantity: 1, price: 100.0 });
+            order.addPayment({
+                type: 'PIX',
+                method: 'PIX',
+                value: 100.0,
+                origin: 'PIX',
+            });
+            order.setDeliveryAddress({
+                street_name: 'Rua Teste',
+                street_number: '123',
+                city: 'São Paulo',
+                state: 'SP',
+                postal_code: '01000-000',
+                country: 'BR',
+            });
+            order.receive();
+
+            order.confirm();
+
+            expect(order.status).toBe('CONFIRMED');
+            expect(order.statuses).toHaveLength(3);
+            expect(order.statuses[2].name).toBe('CONFIRMED');
+            expect(order.statuses[2].origin).toBe('STORE');
+        });
+
+        it('should throw error when order is not in RECEIVED status', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.confirm()).toThrow(
+                'Only orders in RECEIVED status can be confirmed',
+            );
+        });
+    });
 });
