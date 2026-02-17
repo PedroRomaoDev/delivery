@@ -54,10 +54,12 @@ export const addItemToOrderSchema = z.object({
 
 // Schema para parâmetros de rota (orderId)
 export const orderIdParamSchema = z.object({
-    id: z.string({
-        required_error: 'orderId is required',
-        invalid_type_error: 'orderId must be a string',
-    }),
+    id: z
+        .string({
+            required_error: 'orderId is required',
+            invalid_type_error: 'orderId must be a string',
+        })
+        .min(1, 'orderId cannot be empty'),
 });
 
 // Formas de pagamento aceitas
@@ -76,4 +78,63 @@ export const addPaymentToOrderSchema = z.object({
         })
         .optional()
         .default(true),
+});
+
+// Schema para coordinates (opcional)
+const coordinatesSchema = z
+    .object({
+        latitude: z.number({
+            required_error: 'latitude is required',
+            invalid_type_error: 'latitude must be a number',
+        }),
+        longitude: z.number({
+            required_error: 'longitude is required',
+            invalid_type_error: 'longitude must be a number',
+        }),
+        id: z.number().optional(),
+    })
+    .optional()
+    .nullable();
+
+// Schema para adicionar endereço de entrega ao pedido
+export const addDeliveryAddressToOrderSchema = z.object({
+    street_name: z
+        .string({
+            required_error: 'street_name is required',
+            invalid_type_error: 'street_name must be a string',
+        })
+        .min(1, 'street_name cannot be empty'),
+    street_number: z
+        .string({
+            required_error: 'street_number is required',
+            invalid_type_error: 'street_number must be a string',
+        })
+        .min(1, 'street_number cannot be empty'),
+    city: z
+        .string({
+            required_error: 'city is required',
+            invalid_type_error: 'city must be a string',
+        })
+        .min(1, 'city cannot be empty'),
+    state: z
+        .string({
+            required_error: 'state is required',
+            invalid_type_error: 'state must be a string',
+        })
+        .min(1, 'state cannot be empty'),
+    postal_code: z
+        .string({
+            required_error: 'postal_code is required',
+            invalid_type_error: 'postal_code must be a string',
+        })
+        .min(1, 'postal_code cannot be empty'),
+    country: z
+        .string({
+            required_error: 'country is required',
+            invalid_type_error: 'country must be a string',
+        })
+        .min(1, 'country cannot be empty'),
+    neighborhood: z.string().optional().nullable(),
+    reference: z.string().optional().nullable(),
+    coordinates: coordinatesSchema,
 });
