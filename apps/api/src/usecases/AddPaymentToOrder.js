@@ -29,7 +29,7 @@ class AddPaymentToOrderUseCase {
             );
         }
 
-        // Calcula o valor do pagamento baseado no total dos items
+        // Valida se o pedido tem items antes de adicionar pagamento
         const value = order.getTotalItems();
 
         if (value <= 0) {

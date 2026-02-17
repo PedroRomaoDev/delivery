@@ -35,6 +35,13 @@ class AddDeliveryAddressToOrderUseCase {
             );
         }
 
+        // Valida se o pedido tem payment antes de adicionar delivery address
+        if (!order.payments || order.payments.length === 0) {
+            throw new Error(
+                'Order must have payment before adding delivery address',
+            );
+        }
+
         // Geocoding automático se coordinates não foi fornecido ou é inválido
         const hasValidCoordinates =
             address.coordinates &&
