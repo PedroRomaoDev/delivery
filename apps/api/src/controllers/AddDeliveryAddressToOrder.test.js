@@ -341,6 +341,22 @@ describe('AddDeliveryAddressToOrderController', () => {
             });
         });
 
+        it('should return 400 when order has no payment', async () => {
+            addDeliveryAddressToOrderUseCase.execute.mockRejectedValue(
+                new Error(
+                    'Order must have payment before adding delivery address',
+                ),
+            );
+
+            await controller.handle(request, reply);
+
+            expect(reply.status).toHaveBeenCalledWith(400);
+            expect(reply.send).toHaveBeenCalledWith({
+                message:
+                    'Order must have payment before adding delivery address',
+            });
+        });
+
         it('should return 500 when unexpected error occurs', async () => {
             const consoleErrorSpy = jest
                 .spyOn(console, 'error')
