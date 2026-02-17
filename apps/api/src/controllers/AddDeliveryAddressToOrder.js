@@ -60,7 +60,9 @@ class AddDeliveryAddressToOrderController {
                 error.message ===
                     'Cannot set delivery address to order that is not in DRAFT status' ||
                 error.message ===
-                    'Address must have street_name, street_number, city, state, postal_code and country'
+                    'Address must have street_name, street_number, city, state, postal_code and country' ||
+                error.message ===
+                    'Order must have payment before adding delivery address'
             ) {
                 const response = badRequest(error.message);
                 return reply.status(response.statusCode).send(response.body);
