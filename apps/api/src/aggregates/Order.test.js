@@ -343,6 +343,268 @@ describe('Order Aggregate', () => {
         });
     });
 
+    describe('updateCustomer', () => {
+        it('should update customer name in DRAFT order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            const updatedCustomer = order.updateCustomer({
+                name: 'Maria Santos',
+            });
+
+            expect(updatedCustomer.name).toBe('Maria Santos');
+            expect(updatedCustomer.phone).toBe('11987654321'); // não mudou
+        });
+
+        it('should update customer phone', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            const updatedCustomer = order.updateCustomer({
+                phone: '11999999999',
+            });
+
+            expect(updatedCustomer.name).toBe('João Silva'); // não mudou
+            expect(updatedCustomer.phone).toBe('11999999999');
+        });
+
+        it('should update both name and phone', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            const updatedCustomer = order.updateCustomer({
+                name: 'Carlos Pereira',
+                phone: '11888888888',
+            });
+
+            expect(updatedCustomer.name).toBe('Carlos Pereira');
+            expect(updatedCustomer.phone).toBe('11888888888');
+        });
+
+        it('should throw error when updating customer in non-DRAFT order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+            order.status = 'RECEIVED';
+
+            expect(() =>
+                order.updateCustomer({ name: 'Maria Santos' }),
+            ).toThrow(
+                'Cannot update customer in order that is not in DRAFT status',
+            );
+        });
+
+        it('should throw error when updates is not provided', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.updateCustomer(null)).toThrow(
+                'updates is required and must be an object',
+            );
+        });
+
+        it('should throw error when no field is provided', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.updateCustomer({})).toThrow(
+                'At least one field (name or phone) must be provided',
+            );
+        });
+
+        it('should throw error when name is empty string', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.updateCustomer({ name: '' })).toThrow(
+                'name must be a non-empty string',
+            );
+
+            expect(() => order.updateCustomer({ name: '   ' })).toThrow(
+                'name must be a non-empty string',
+            );
+        });
+
+        it('should throw error when phone is empty string', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.updateCustomer({ phone: '' })).toThrow(
+                'phone must be a non-empty string',
+            );
+
+            expect(() => order.updateCustomer({ phone: '   ' })).toThrow(
+                'phone must be a non-empty string',
+            );
+        });
+
+        it('should throw error when name is not a string', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.updateCustomer({ name: 123 })).toThrow(
+                'name must be a non-empty string',
+            );
+        });
+
+        it('should throw error when phone is not a string', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.updateCustomer({ phone: 123456789 })).toThrow(
+                'phone must be a non-empty string',
+            );
+        });
+    });
+
+    describe('removeItem', () => {
+        it('should remove item from order in DRAFT status', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 123, quantity: 2, price: 50.0 });
+            order.addItem({ code: 456, quantity: 1, price: 30.0 });
+
+            expect(order.items).toHaveLength(2);
+
+            const removedItem = order.removeItem(123);
+
+            expect(removedItem.code).toBe(123);
+            expect(order.items).toHaveLength(1);
+            expect(order.items[0].code).toBe(456);
+        });
+
+        it('should remove the correct item when multiple items exist', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 111, quantity: 1, price: 10.0 });
+            order.addItem({ code: 222, quantity: 2, price: 20.0 });
+            order.addItem({ code: 333, quantity: 3, price: 30.0 });
+
+            order.removeItem(222);
+
+            expect(order.items).toHaveLength(2);
+            expect(order.items.find((item) => item.code === 111)).toBeDefined();
+            expect(order.items.find((item) => item.code === 333)).toBeDefined();
+            expect(
+                order.items.find((item) => item.code === 222),
+            ).toBeUndefined();
+        });
+
+        it('should remove last remaining item', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 123, quantity: 1, price: 50.0 });
+
+            expect(order.items).toHaveLength(1);
+
+            order.removeItem(123);
+
+            expect(order.items).toHaveLength(0);
+        });
+
+        it('should throw error when removing item from non-DRAFT order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 123, quantity: 2, price: 50.0 });
+            order.status = 'RECEIVED';
+
+            expect(() => order.removeItem(123)).toThrow(
+                'Cannot remove items from order that is not in DRAFT status',
+            );
+        });
+
+        it('should throw error when item code is not provided', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.removeItem()).toThrow('Item code is required');
+            expect(() => order.removeItem(null)).toThrow(
+                'Item code is required',
+            );
+        });
+
+        it('should throw error when item is not found', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 123, quantity: 2, price: 50.0 });
+
+            expect(() => order.removeItem(999)).toThrow('Item not found');
+        });
+
+        it('should throw error when trying to remove from empty items array', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.removeItem(123)).toThrow('Item not found');
+        });
+
+        it('should return the removed item with all its properties', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({
+                code: 123,
+                quantity: 2,
+                price: 50.0,
+                observations: 'Sem cebola',
+                name: 'Pizza Grande',
+            });
+
+            const removedItem = order.removeItem(123);
+
+            expect(removedItem).toEqual({
+                code: 123,
+                quantity: 2,
+                price: 50.0,
+                total_price: 100.0,
+                observations: 'Sem cebola',
+                name: 'Pizza Grande',
+                discount: 0,
+                condiments: [],
+            });
+        });
+    });
+
     describe('addPayment', () => {
         it('should add payment to order in DRAFT status', () => {
             const order = new Order('store-123', {

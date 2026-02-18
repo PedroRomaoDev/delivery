@@ -206,6 +206,83 @@ class Order {
     }
 
     /**
+     * Remove um item do pedido (apenas em DRAFT)
+     * @param {number} code - Código do item a ser removido
+     * @returns {Object} Item removido
+     */
+    removeItem(code) {
+        if (!this.isDraft()) {
+            throw new Error(
+                'Cannot remove items from order that is not in DRAFT status',
+            );
+        }
+
+        if (!code) {
+            throw new Error('Item code is required');
+        }
+
+        const itemIndex = this.items.findIndex((item) => item.code === code);
+
+        if (itemIndex === -1) {
+            throw new Error('Item not found');
+        }
+
+        const removedItem = this.items[itemIndex];
+        this.items.splice(itemIndex, 1);
+
+        return removedItem;
+    }
+
+    /**
+     * Atualiza os dados do cliente (apenas em DRAFT)
+     * @param {Object} updates - Campos a serem atualizados
+     * @param {string} [updates.name] - Novo nome do cliente
+     * @param {string} [updates.phone] - Novo telefone do cliente
+     * @returns {Object} Cliente atualizado
+     */
+    updateCustomer(updates) {
+        if (!this.isDraft()) {
+            throw new Error(
+                'Cannot update customer in order that is not in DRAFT status',
+            );
+        }
+
+        if (!updates || typeof updates !== 'object') {
+            throw new Error('updates is required and must be an object');
+        }
+
+        // Pelo menos um campo deve ser fornecido
+        if (updates.name === undefined && updates.phone === undefined) {
+            throw new Error(
+                'At least one field (name or phone) must be provided',
+            );
+        }
+
+        // Atualizar campos permitidos
+        if (updates.name !== undefined) {
+            if (
+                typeof updates.name !== 'string' ||
+                updates.name.trim() === ''
+            ) {
+                throw new Error('name must be a non-empty string');
+            }
+            this.customer.name = updates.name;
+        }
+
+        if (updates.phone !== undefined) {
+            if (
+                typeof updates.phone !== 'string' ||
+                updates.phone.trim() === ''
+            ) {
+                throw new Error('phone must be a non-empty string');
+            }
+            this.customer.phone = updates.phone;
+        }
+
+        return this.customer;
+    }
+
+    /**
      * Adiciona um pagamento ao pedido (apenas em DRAFT)
      * @param {Object} payment - Pagamento a ser adicionado
      * @param {string} payment.origin - Método de pagamento (CREDIT_CARD, PIX, CASH, VR, etc.)
