@@ -10,3 +10,5 @@ export * from './controllers/DeliverOrder.js';
 export * from './controllers/CancelOrder.js';
 export * from './controllers/GetOrderById.js';
 export * from './controllers/UpdateItemInOrder.js';
+export * from './controllers/UpdateCustomerInOrder.js';
+export * from './controllers/RemoveItemFromOrder.js';
