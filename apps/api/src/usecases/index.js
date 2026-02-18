@@ -3,6 +3,8 @@ import CreateOrderUseCase from './CreateOrder.js';
 import AddItemToOrderUseCase from './AddItemToOrder.js';
 import GetOrderByIdUseCase from './GetOrderById.js';
 import UpdateItemInOrderUseCase from './UpdateItemInOrder.js';
+import UpdateCustomerInOrderUseCase from './UpdateCustomerInOrder.js';
+import RemoveItemFromOrderUseCase from './RemoveItemFromOrder.js';
 
 export {
     FindAllOrdersUseCase,
@@ -10,4 +12,6 @@ export {
     AddItemToOrderUseCase,
     GetOrderByIdUseCase,
     UpdateItemInOrderUseCase,
+    UpdateCustomerInOrderUseCase,
+    RemoveItemFromOrderUseCase,
 };
