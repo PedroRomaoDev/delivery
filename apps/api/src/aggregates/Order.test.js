@@ -180,6 +180,169 @@ describe('Order Aggregate', () => {
         });
     });
 
+    describe('updateItem', () => {
+        it('should update item quantity in DRAFT order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({
+                code: 123,
+                quantity: 2,
+                price: 50.0,
+                name: 'Pizza',
+            });
+
+            const updatedItem = order.updateItem(123, { quantity: 5 });
+
+            expect(updatedItem.code).toBe(123);
+            expect(updatedItem.quantity).toBe(5);
+            expect(updatedItem.total_price).toBe(250.0);
+            expect(updatedItem.name).toBe('Pizza');
+        });
+
+        it('should update item observations', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({
+                code: 456,
+                quantity: 1,
+                price: 30.0,
+                observations: 'Sem cebola',
+            });
+
+            const updatedItem = order.updateItem(456, {
+                observations: 'Com bastante queijo',
+            });
+
+            expect(updatedItem.observations).toBe('Com bastante queijo');
+            expect(updatedItem.quantity).toBe(1); // não mudou
+        });
+
+        it('should update item name', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({
+                code: 789,
+                quantity: 1,
+                price: 25.0,
+                name: 'Product 789',
+            });
+
+            const updatedItem = order.updateItem(789, {
+                name: 'Hambúrguer Especial',
+            });
+
+            expect(updatedItem.name).toBe('Hambúrguer Especial');
+        });
+
+        it('should update multiple fields at once', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({
+                code: 111,
+                quantity: 1,
+                price: 40.0,
+                name: 'Produto Original',
+                observations: 'Observação original',
+            });
+
+            const updatedItem = order.updateItem(111, {
+                quantity: 3,
+                name: 'Produto Atualizado',
+                observations: 'Nova observação',
+            });
+
+            expect(updatedItem.quantity).toBe(3);
+            expect(updatedItem.total_price).toBe(120.0);
+            expect(updatedItem.name).toBe('Produto Atualizado');
+            expect(updatedItem.observations).toBe('Nova observação');
+        });
+
+        it('should throw error when updating item in non-DRAFT order', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 123, quantity: 1, price: 50.0 });
+            order.status = 'RECEIVED';
+
+            expect(() => order.updateItem(123, { quantity: 2 })).toThrow(
+                'Cannot update items in order that is not in DRAFT status',
+            );
+        });
+
+        it('should throw error when item is not found', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 123, quantity: 1, price: 50.0 });
+
+            expect(() => order.updateItem(999, { quantity: 2 })).toThrow(
+                'Item not found',
+            );
+        });
+
+        it('should throw error when code is not provided', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            expect(() => order.updateItem(null, { quantity: 2 })).toThrow(
+                'Item code is required',
+            );
+        });
+
+        it('should throw error when quantity is invalid', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({ code: 123, quantity: 1, price: 50.0 });
+
+            expect(() => order.updateItem(123, { quantity: 0 })).toThrow(
+                'Quantity must be a number greater than 0',
+            );
+
+            expect(() => order.updateItem(123, { quantity: -1 })).toThrow(
+                'Quantity must be a number greater than 0',
+            );
+        });
+
+        it('should set observations to null when empty string is provided', () => {
+            const order = new Order('store-123', {
+                name: 'João Silva',
+                phone: '11987654321',
+            });
+
+            order.addItem({
+                code: 123,
+                quantity: 1,
+                price: 50.0,
+                observations: 'Observação inicial',
+            });
+
+            const updatedItem = order.updateItem(123, { observations: '' });
+
+            expect(updatedItem.observations).toBeNull();
+        });
+    });
+
     describe('addPayment', () => {
         it('should add payment to order in DRAFT status', () => {
             const order = new Order('store-123', {

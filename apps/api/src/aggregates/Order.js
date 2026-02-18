@@ -156,6 +156,56 @@ class Order {
     }
 
     /**
+     * Atualiza um item existente no pedido (apenas em DRAFT)
+     * @param {number} code - Código do item a ser atualizado
+     * @param {Object} updates - Campos a serem atualizados
+     * @param {number} [updates.quantity] - Nova quantidade
+     * @param {string} [updates.observations] - Novas observações
+     * @param {string} [updates.name] - Novo nome
+     * @returns {Object} Item atualizado
+     */
+    updateItem(code, updates) {
+        if (!this.isDraft()) {
+            throw new Error(
+                'Cannot update items in order that is not in DRAFT status',
+            );
+        }
+
+        if (!code) {
+            throw new Error('Item code is required');
+        }
+
+        const itemIndex = this.items.findIndex((item) => item.code === code);
+
+        if (itemIndex === -1) {
+            throw new Error('Item not found');
+        }
+
+        const item = this.items[itemIndex];
+
+        // Atualizar campos permitidos
+        if (updates.quantity !== undefined) {
+            if (typeof updates.quantity !== 'number' || updates.quantity < 1) {
+                throw new Error('Quantity must be a number greater than 0');
+            }
+            item.quantity = updates.quantity;
+            item.total_price = parseFloat(
+                (item.price * item.quantity).toFixed(2),
+            );
+        }
+
+        if (updates.observations !== undefined) {
+            item.observations = updates.observations || null;
+        }
+
+        if (updates.name !== undefined) {
+            item.name = updates.name || `Product ${item.code}`;
+        }
+
+        return item;
+    }
+
+    /**
      * Adiciona um pagamento ao pedido (apenas em DRAFT)
      * @param {Object} payment - Pagamento a ser adicionado
      * @param {string} payment.origin - Método de pagamento (CREDIT_CARD, PIX, CASH, VR, etc.)
