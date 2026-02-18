@@ -444,14 +444,5 @@ stateDiagram-v2
         [*] --> Final
     }
 
-### Visual Mental Model
-```markdown
-                    cancel
-        ┌──────────────┐
-        ↓              ↓
-DRAFT → RECEIVED → CONFIRMED → DISPATCHED → DELIVERED
-   ↓         ↓            ↓
-   └──────── CANCELED ────┘
-
 
 
