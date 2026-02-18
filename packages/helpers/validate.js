@@ -1,11 +1,5 @@
 import { ZodError } from 'zod';
 
-/**
- * Valida dados usando um schema Zod
- * @param {import('zod').ZodSchema} schema - Schema Zod para validação
- * @param {any} data - Dados a serem validados
- * @returns {{ success: true, data: any } | { success: false, errors: Array<{field: string, message: string}> }}
- */
 export function validate(schema, data) {
     try {
         const validatedData = schema.parse(data);
@@ -24,17 +18,10 @@ export function validate(schema, data) {
                 errors,
             };
         }
-        // Erro inesperado, propagar
         throw error;
     }
 }
 
-/**
- * Valida assincronamente dados usando um schema Zod
- * @param {import('zod').ZodSchema} schema - Schema Zod para validação
- * @param {any} data - Dados a serem validados
- * @returns {Promise<{ success: true, data: any } | { success: false, errors: Array<{field: string, message: string}> }>}
- */
 export async function validateAsync(schema, data) {
     try {
         const validatedData = await schema.parseAsync(data);
@@ -53,7 +40,6 @@ export async function validateAsync(schema, data) {
                 errors,
             };
         }
-        // Erro inesperado, propagar
         throw error;
     }
 }

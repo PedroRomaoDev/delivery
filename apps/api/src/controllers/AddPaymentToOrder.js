@@ -17,7 +17,6 @@ class AddPaymentToOrderController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota
             const paramsValidation = validate(
                 orderIdParamSchema,
                 request.params,
@@ -28,7 +27,6 @@ class AddPaymentToOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Validação do body
             const bodyValidation = validate(
                 addPaymentToOrderSchema,
                 request.body,
@@ -42,18 +40,15 @@ class AddPaymentToOrderController {
             const { id: orderId } = paramsValidation.data;
             const { origin, prepaid } = bodyValidation.data;
 
-            // Executa o UseCase
             const orderUpdated = await this.addPaymentToOrderUseCase.execute({
                 orderId,
                 origin,
                 prepaid,
             });
 
-            // Retorna sucesso
             const response = ok(orderUpdated);
             return reply.status(response.statusCode).send(response.body);
         } catch (error) {
-            // Erros de negócio conhecidos
             if (
                 error.message === 'Order not found' ||
                 error.message ===
@@ -67,7 +62,6 @@ class AddPaymentToOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Erro genérico
             console.error('Error in AddPaymentToOrderController:', error);
             const response = serverError();
             return reply.status(response.statusCode).send(response.body);

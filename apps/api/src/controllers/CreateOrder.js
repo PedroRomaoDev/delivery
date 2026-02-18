@@ -16,7 +16,6 @@ class CreateOrderController {
 
     async execute(request, reply) {
         try {
-            // Validação com Zod
             const validation = validate(createOrderSchema, request.body);
 
             if (!validation.success) {
@@ -26,7 +25,6 @@ class CreateOrderController {
 
             const { storeId, customer } = validation.data;
 
-            // Executa o UseCase
             const order = await this.createOrderUseCase.execute({
                 storeId,
                 customer,

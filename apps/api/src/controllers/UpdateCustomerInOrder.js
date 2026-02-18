@@ -17,7 +17,6 @@ class UpdateCustomerInOrderController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota (orderId)
             const paramsValidation = validate(
                 orderIdParamSchema,
                 request.params,
@@ -28,7 +27,6 @@ class UpdateCustomerInOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Validação do body
             const bodyValidation = validate(updateCustomerSchema, request.body);
 
             if (!bodyValidation.success) {
@@ -39,7 +37,6 @@ class UpdateCustomerInOrderController {
             const { id: orderId } = paramsValidation.data;
             const updates = bodyValidation.data;
 
-            // Executa o UseCase
             const orderUpdated =
                 await this.updateCustomerInOrderUseCase.execute({
                     orderId,
@@ -49,7 +46,6 @@ class UpdateCustomerInOrderController {
             const response = ok(orderUpdated);
             return reply.status(response.statusCode).send(response.body);
         } catch (error) {
-            // Erros de negócio conhecidos
             if (
                 error.message === 'Order not found' ||
                 error.message ===
@@ -59,7 +55,6 @@ class UpdateCustomerInOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Erro genérico
             console.error('Error updating customer in order:', error);
             const response = serverError();
             return reply.status(response.statusCode).send(response.body);

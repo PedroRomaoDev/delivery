@@ -2,13 +2,6 @@ import { randomUUID } from 'node:crypto';
 import { DEFAULT_STORE_NAME } from '../config/constants.js';
 
 class Order {
-    /**
-     * Cria um novo pedido no estado DRAFT
-     * @param {string} storeId - ID da loja
-     * @param {Object} customer - Dados do cliente
-     * @param {string} customer.name - Nome do cliente
-     * @param {string} customer.phone - Telefone do cliente
-     */
     constructor(storeId, customer) {
         this.#validateConstructorParams(storeId, customer);
 
@@ -50,11 +43,6 @@ class Order {
         }
     }
 
-    /**
-     * Hidrata um pedido existente a partir dos dados do JSON
-     * @param {Object} data - Dados do pedido no formato snake_case
-     * @returns {Order}
-     */
     static hydrate(data) {
         const order = Object.create(Order.prototype);
 
@@ -74,42 +62,22 @@ class Order {
         return order;
     }
 
-    /**
-     * Verifica se o pedido está em estado DRAFT
-     * @returns {boolean}
-     */
     isDraft() {
         return this.status === 'DRAFT';
     }
 
-    /**
-     * Verifica se o pedido está em estado RECEIVED
-     * @returns {boolean}
-     */
     isReceived() {
         return this.status === 'RECEIVED';
     }
 
-    /**
-     * Verifica se o pedido está em estado CONFIRMED
-     * @returns {boolean}
-     */
     isConfirmed() {
         return this.status === 'CONFIRMED';
     }
 
-    /**
-     * Verifica se o pedido está em estado DISPATCHED
-     * @returns {boolean}
-     */
     isDispatched() {
         return this.status === 'DISPATCHED';
     }
 
-    /**
-     * Verifica se o pedido pode ser cancelado
-     * @returns {boolean}
-     */
     isCancelable() {
         return (
             this.status === 'DRAFT' ||
@@ -118,15 +86,6 @@ class Order {
         );
     }
 
-    /**
-     * Adiciona um item ao pedido (apenas em DRAFT)
-     * @param {Object} item - Item a ser adicionado
-     * @param {number} item.code - Código do produto
-     * @param {number} item.quantity - Quantidade
-     * @param {number} item.price - Preço unitário
-     * @param {string} [item.name] - Nome do produto
-     * @param {string} [item.observations] - Observações opcionais
-     */
     addItem(item) {
         if (!this.isDraft()) {
             throw new Error(
@@ -155,15 +114,6 @@ class Order {
         return newItem;
     }
 
-    /**
-     * Atualiza um item existente no pedido (apenas em DRAFT)
-     * @param {number} code - Código do item a ser atualizado
-     * @param {Object} updates - Campos a serem atualizados
-     * @param {number} [updates.quantity] - Nova quantidade
-     * @param {string} [updates.observations] - Novas observações
-     * @param {string} [updates.name] - Novo nome
-     * @returns {Object} Item atualizado
-     */
     updateItem(code, updates) {
         if (!this.isDraft()) {
             throw new Error(
@@ -183,7 +133,6 @@ class Order {
 
         const item = this.items[itemIndex];
 
-        // Atualizar campos permitidos
         if (updates.quantity !== undefined) {
             if (typeof updates.quantity !== 'number' || updates.quantity < 1) {
                 throw new Error('Quantity must be a number greater than 0');
@@ -205,11 +154,6 @@ class Order {
         return item;
     }
 
-    /**
-     * Remove um item do pedido (apenas em DRAFT)
-     * @param {number} code - Código do item a ser removido
-     * @returns {Object} Item removido
-     */
     removeItem(code) {
         if (!this.isDraft()) {
             throw new Error(
@@ -233,13 +177,6 @@ class Order {
         return removedItem;
     }
 
-    /**
-     * Atualiza os dados do cliente (apenas em DRAFT)
-     * @param {Object} updates - Campos a serem atualizados
-     * @param {string} [updates.name] - Novo nome do cliente
-     * @param {string} [updates.phone] - Novo telefone do cliente
-     * @returns {Object} Cliente atualizado
-     */
     updateCustomer(updates) {
         if (!this.isDraft()) {
             throw new Error(
@@ -251,14 +188,12 @@ class Order {
             throw new Error('updates is required and must be an object');
         }
 
-        // Pelo menos um campo deve ser fornecido
         if (updates.name === undefined && updates.phone === undefined) {
             throw new Error(
                 'At least one field (name or phone) must be provided',
             );
         }
 
-        // Atualizar campos permitidos
         if (updates.name !== undefined) {
             if (
                 typeof updates.name !== 'string' ||
@@ -282,13 +217,6 @@ class Order {
         return this.customer;
     }
 
-    /**
-     * Adiciona um pagamento ao pedido (apenas em DRAFT)
-     * @param {Object} payment - Pagamento a ser adicionado
-     * @param {string} payment.origin - Método de pagamento (CREDIT_CARD, PIX, CASH, VR, etc.)
-     * @param {number} payment.value - Valor do pagamento
-     * @param {boolean} [payment.prepaid=true] - Se o pagamento foi pré-pago
-     */
     addPayment(payment) {
         if (!this.isDraft()) {
             throw new Error(
@@ -306,21 +234,10 @@ class Order {
             origin: payment.origin,
         };
 
-        // Sobrescreve qualquer payment existente
         this.payments = [newPayment];
         return newPayment;
     }
 
-    /**
-     * Define o endereço de entrega (apenas em DRAFT)
-     * @param {Object} address - Endereço de entrega
-     * @param {string} address.street - Rua
-     * @param {string} address.number - Número
-     * @param {string} address.city - Cidade
-     * @param {string} address.state - Estado
-     * @param {string} address.zipCode - CEP
-     * @param {string} [address.complement] - Complemento opcional
-     */
     setDeliveryAddress(address) {
         if (!this.isDraft()) {
             throw new Error(
@@ -357,10 +274,6 @@ class Order {
         return this.deliveryAddress;
     }
 
-    /**
-     * Calcula o valor total dos items
-     * @returns {number}
-     */
     getTotalItems() {
         const total = this.items.reduce((total, item) => {
             return total + item.price * item.quantity;
@@ -368,10 +281,6 @@ class Order {
         return parseFloat(total.toFixed(2));
     }
 
-    /**
-     * Calcula o valor total dos pagamentos
-     * @returns {number}
-     */
     getTotalPayments() {
         const total = this.payments.reduce((total, payment) => {
             return total + payment.value;
@@ -379,10 +288,6 @@ class Order {
         return parseFloat(total.toFixed(2));
     }
 
-    /**
-     * Verifica se o pedido está completo e pronto para ser recebido
-     * @returns {boolean}
-     */
     isComplete() {
         const hasItems = this.items.length > 0;
         const hasDeliveryAddress = this.deliveryAddress !== null;
@@ -395,10 +300,6 @@ class Order {
         );
     }
 
-    /**
-     * Retorna os passos que faltam para completar o pedido
-     * @returns {string[]}
-     */
     getMissingSteps() {
         const missing = [];
 
@@ -430,11 +331,6 @@ class Order {
         return missing;
     }
 
-    /**
-     * Adiciona um novo status ao histórico de status do pedido
-     * @param {string} statusName - Nome do status (DRAFT, RECEIVED, CONFIRMED, etc.)
-     * @param {string} origin - Origem da mudança (CUSTOMER, STORE, SYSTEM)
-     */
     addStatusToHistory(statusName, origin = 'SYSTEM') {
         this.status = statusName;
         this.statuses.push({
@@ -444,11 +340,6 @@ class Order {
         });
     }
 
-    /**
-     * Recebe o pedido (transição DRAFT → RECEIVED)
-     * @throws {Error} Se o pedido não estiver em DRAFT
-     * @throws {Error} Se o pedido não estiver completo
-     */
     receive() {
         if (!this.isDraft()) {
             throw new Error('Only orders in DRAFT status can be received');
@@ -464,10 +355,6 @@ class Order {
         this.addStatusToHistory('RECEIVED', 'CUSTOMER');
     }
 
-    /**
-     * Confirma o pedido (transição RECEIVED → CONFIRMED)
-     * @throws {Error} Se o pedido não estiver em RECEIVED
-     */
     confirm() {
         if (!this.isReceived()) {
             throw new Error('Only orders in RECEIVED status can be confirmed');
@@ -476,10 +363,6 @@ class Order {
         this.addStatusToHistory('CONFIRMED', 'STORE');
     }
 
-    /**
-     * Despacha o pedido (transição CONFIRMED → DISPATCHED)
-     * @throws {Error} Se o pedido não estiver em CONFIRMED
-     */
     dispatch() {
         if (!this.isConfirmed()) {
             throw new Error(
@@ -490,10 +373,6 @@ class Order {
         this.addStatusToHistory('DISPATCHED', 'STORE');
     }
 
-    /**
-     * Entrega o pedido (transição DISPATCHED → DELIVERED)
-     * @throws {Error} Se o pedido não estiver em DISPATCHED
-     */
     deliver() {
         if (!this.isDispatched()) {
             throw new Error(
@@ -504,10 +383,6 @@ class Order {
         this.addStatusToHistory('DELIVERED', 'STORE');
     }
 
-    /**
-     * Cancela o pedido (transição DRAFT|RECEIVED|CONFIRMED → CANCELED)
-     * @throws {Error} Se o pedido não puder ser cancelado
-     */
     cancel() {
         if (!this.isCancelable()) {
             throw new Error(
@@ -518,10 +393,6 @@ class Order {
         this.addStatusToHistory('CANCELED', 'STORE');
     }
 
-    /**
-     * Retorna uma representação simples do pedido para serialização
-     * @returns {Object}
-     */
     toJSON() {
         return {
             store_id: this.storeId,

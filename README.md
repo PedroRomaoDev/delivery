@@ -230,7 +230,7 @@ pnpm install
 ### Desenvolvimento
 
 ```bash
-# Executar API em modo desenvolvimento (hot reload)
+# Executar API no container Docker
 cd apps/api
 pnpm run dev
 ```
@@ -257,6 +257,7 @@ A aplicação está containerizada e pronta para ser executada em containers Doc
 
 ```bash
 # Na raiz do projeto
+docker-compose build
 docker-compose up -d
 
 # Ou usando npm scripts

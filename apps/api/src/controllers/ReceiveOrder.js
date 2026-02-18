@@ -14,7 +14,6 @@ class ReceiveOrderController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota
             const paramsValidation = validate(
                 orderIdParamSchema,
                 request.params,
@@ -27,19 +26,16 @@ class ReceiveOrderController {
 
             const { id: orderId } = paramsValidation.data;
 
-            // Executa o UseCase
             const orderUpdated = await this.receiveOrderUseCase.execute({
                 orderId,
             });
 
-            // Retorna sucesso com mensagem
             const response = ok({
                 message: 'Order received successfully',
                 order: orderUpdated,
             });
             return reply.status(response.statusCode).send(response.body);
         } catch (error) {
-            // Erros de negócio conhecidos
             if (
                 error.message === 'Order not found' ||
                 error.message ===
@@ -50,7 +46,6 @@ class ReceiveOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Erro genérico
             console.error('Error in ReceiveOrderController:', error);
             const response = serverError();
             return reply.status(response.statusCode).send(response.body);

@@ -20,11 +20,9 @@ class AddItemToOrderRepository {
         try {
             const dataPath = this._getDataPath();
 
-            // Lê os pedidos existentes
             const data = await fs.readFile(dataPath, 'utf-8');
             const orders = JSON.parse(data);
 
-            // Encontra o índice do pedido
             const orderIndex = orders.findIndex(
                 (o) => o.order_id === orderData.order_id,
             );
@@ -33,10 +31,8 @@ class AddItemToOrderRepository {
                 throw new Error('Order not found');
             }
 
-            // Atualiza o pedido
             orders[orderIndex] = orderData;
 
-            // Salva de volta no arquivo
             await fs.writeFile(
                 dataPath,
                 JSON.stringify(orders, null, 2),
@@ -45,7 +41,6 @@ class AddItemToOrderRepository {
 
             return orderData;
         } catch (error) {
-            // Preserva erros de negócio
             if (error.message === 'Order not found') {
                 throw error;
             }

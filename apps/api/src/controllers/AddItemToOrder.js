@@ -17,7 +17,6 @@ class AddItemToOrderController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota
             const paramsValidation = validate(
                 orderIdParamSchema,
                 request.params,
@@ -28,7 +27,6 @@ class AddItemToOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Validação do body
             const bodyValidation = validate(addItemToOrderSchema, request.body);
 
             if (!bodyValidation.success) {
@@ -39,7 +37,6 @@ class AddItemToOrderController {
             const { id: orderId } = paramsValidation.data;
             const { code, quantity, observations, name } = bodyValidation.data;
 
-            // Executa o UseCase
             const orderUpdated = await this.addItemToOrderUseCase.execute({
                 orderId,
                 code,

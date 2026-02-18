@@ -14,7 +14,6 @@ class RemoveItemFromOrderController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota (orderId + code)
             const paramsValidation = validate(
                 itemCodeParamSchema,
                 request.params,
@@ -27,7 +26,6 @@ class RemoveItemFromOrderController {
 
             const { id: orderId, code } = paramsValidation.data;
 
-            // Executa o UseCase
             const orderUpdated = await this.removeItemFromOrderUseCase.execute({
                 orderId,
                 code,
@@ -36,7 +34,6 @@ class RemoveItemFromOrderController {
             const response = ok(orderUpdated);
             return reply.status(response.statusCode).send(response.body);
         } catch (error) {
-            // Erros de negócio conhecidos
             if (
                 error.message === 'Order not found' ||
                 error.message === 'Item not found' ||
@@ -47,7 +44,6 @@ class RemoveItemFromOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Erro genérico
             console.error('Error removing item from order:', error);
             const response = serverError();
             return reply.status(response.statusCode).send(response.body);

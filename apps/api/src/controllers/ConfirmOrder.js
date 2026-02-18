@@ -14,7 +14,6 @@ class ConfirmOrderController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota
             const paramsValidation = validate(
                 orderIdParamSchema,
                 request.params,
@@ -27,19 +26,16 @@ class ConfirmOrderController {
 
             const { id: orderId } = paramsValidation.data;
 
-            // Executa o UseCase
             const orderUpdated = await this.confirmOrderUseCase.execute({
                 orderId,
             });
 
-            // Retorna sucesso com mensagem
             const response = ok({
                 message: 'Order confirmed successfully',
                 order: orderUpdated,
             });
             return reply.status(response.statusCode).send(response.body);
         } catch (error) {
-            // Erros de negócio conhecidos
             if (
                 error.message === 'Order not found' ||
                 error.message ===
@@ -49,7 +45,6 @@ class ConfirmOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Erro genérico
             console.error('Error in ConfirmOrderController:', error);
             const response = serverError();
             return reply.status(response.statusCode).send(response.body);

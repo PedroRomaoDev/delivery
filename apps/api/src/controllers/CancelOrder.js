@@ -14,7 +14,6 @@ class CancelOrderController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota
             const paramsValidation = validate(
                 orderIdParamSchema,
                 request.params,
@@ -27,19 +26,16 @@ class CancelOrderController {
 
             const { id: orderId } = paramsValidation.data;
 
-            // Executa o UseCase
             const orderUpdated = await this.cancelOrderUseCase.execute({
                 orderId,
             });
 
-            // Retorna sucesso com mensagem
             const response = ok({
                 message: 'Order canceled successfully',
                 order: orderUpdated,
             });
             return reply.status(response.statusCode).send(response.body);
         } catch (error) {
-            // Erros de negócio conhecidos
             if (
                 error.message === 'Order not found' ||
                 error.message ===
@@ -49,7 +45,6 @@ class CancelOrderController {
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Erro genérico
             console.error('Error in CancelOrderController:', error);
             const response = serverError();
             return reply.status(response.statusCode).send(response.body);

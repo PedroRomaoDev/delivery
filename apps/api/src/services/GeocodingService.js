@@ -1,25 +1,12 @@
 class GeocodingService {
     constructor(baseUrl = 'https://nominatim.openstreetmap.org') {
         this.baseUrl = baseUrl;
-        this.timeout = 3000; // 3 segundos
-        this.minConfidence = 0.2; // Threshold de confiança mínima (importance do Nominatim)
+        this.timeout = 3000;
+        this.minConfidence = 0.2;
     }
 
-    /**
-     * Realiza geocoding de um endereço
-     * @param {Object} address - Endereço a ser geocodificado
-     * @param {string} address.street_name - Nome da rua
-     * @param {string} address.street_number - Número do endereço
-     * @param {string} address.city - Cidade
-     * @param {string} address.state - Estado
-     * @param {string} address.country - País (código de 2 letras)
-     * @param {string} [address.neighborhood] - Bairro (opcional)
-     * @returns {Promise<{latitude: number, longitude: number, id: number}>}
-     * @throws {Error} Se geocoding falhar ou tiver baixa confiança
-     */
     async geocode(address) {
         try {
-            // Monta a query de endereço
             const addressParts = [
                 address.street_number,
                 address.street_name,
@@ -31,7 +18,6 @@ class GeocodingService {
                 .filter(Boolean)
                 .join(', ');
 
-            // Monta a URL com parâmetros
             const params = new URLSearchParams({
                 q: addressParts,
                 format: 'json',
@@ -41,7 +27,6 @@ class GeocodingService {
 
             const url = `${this.baseUrl}/search?${params.toString()}`;
 
-            // Fetch com timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(
                 () => controller.abort(),
@@ -71,7 +56,6 @@ class GeocodingService {
 
             const result = results[0];
 
-            // Valida confiança do resultado
             const importance = parseFloat(result.importance) || 0;
 
             if (importance < this.minConfidence) {
@@ -80,7 +64,6 @@ class GeocodingService {
                 );
             }
 
-            // Gera ID aleatório de 7 dígitos
             const id = Math.floor(Math.random() * 10000000);
 
             return {

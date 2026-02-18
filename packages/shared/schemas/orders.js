@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-// Store ID padrão (mesma constante do backend)
 const DEFAULT_STORE_ID = '98765432-abcd-ef00-1234-567890abcdef';
 
-// Schema para Customer
 export const customerSchema = z.object({
     name: z
         .string({
@@ -20,8 +18,6 @@ export const customerSchema = z.object({
     email: z.string().email('Invalid email format').optional(),
 });
 
-// Schema para criar um pedido
-// storeId é opcional e usa valor padrão se não fornecido
 export const createOrderSchema = z.object({
     storeId: z
         .string({
@@ -33,7 +29,6 @@ export const createOrderSchema = z.object({
     customer: customerSchema,
 });
 
-// Schema para adicionar item ao pedido
 export const addItemToOrderSchema = z.object({
     code: z
         .number({
@@ -52,7 +47,6 @@ export const addItemToOrderSchema = z.object({
     observations: z.string().optional().nullable(),
 });
 
-// Schema para parâmetros de rota (orderId)
 export const orderIdParamSchema = z.object({
     id: z
         .string({
@@ -62,7 +56,6 @@ export const orderIdParamSchema = z.object({
         .uuid('orderId must be a valid UUID'),
 });
 
-// Schema para parâmetros de rota (orderId + code)
 export const itemCodeParamSchema = z.object({
     id: z
         .string({
@@ -79,7 +72,6 @@ export const itemCodeParamSchema = z.object({
         .positive('code must be a positive number'),
 });
 
-// Schema para atualizar item no pedido (todos campos opcionais)
 export const updateItemInOrderSchema = z
     .object({
         quantity: z
@@ -96,7 +88,6 @@ export const updateItemInOrderSchema = z
         message: 'At least one field must be provided for update',
     });
 
-// Schema para atualizar cliente no pedido (todos campos opcionais)
 export const updateCustomerSchema = z
     .object({
         name: z.string().optional(),
@@ -106,10 +97,8 @@ export const updateCustomerSchema = z
         message: 'At least one field must be provided for update',
     });
 
-// Formas de pagamento aceitas
 const PAYMENT_ORIGINS = ['CREDIT_CARD', 'DEBIT_CARD', 'CASH', 'PIX', 'VR'];
 
-// Schema para adicionar pagamento ao pedido
 export const addPaymentToOrderSchema = z.object({
     origin: z.enum(PAYMENT_ORIGINS, {
         errorMap: () => ({
@@ -124,7 +113,6 @@ export const addPaymentToOrderSchema = z.object({
         .default(true),
 });
 
-// Schema para coordinates (opcional)
 const coordinatesSchema = z
     .object({
         latitude: z.number({

@@ -25,8 +25,6 @@ export const badRequest = (message) => ({
 export const validationError = (errors) => {
     const fields = errors.map((err) => err.field).join(', ');
 
-    // Se houver apenas um erro, mostrar a mensagem completa dele
-    // Se houver múltiplos erros, mostrar os campos
     const message =
         errors.length === 1
             ? `${errors[0].field}: ${errors[0].message}`

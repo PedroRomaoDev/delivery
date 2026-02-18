@@ -17,7 +17,6 @@ class GetOrderByIdController {
 
     async handle(request, reply) {
         try {
-            // Validação dos parâmetros da rota
             const paramsValidation = validate(
                 orderIdParamSchema,
                 request.params,
@@ -30,20 +29,16 @@ class GetOrderByIdController {
 
             const { id: orderId } = paramsValidation.data;
 
-            // Executa o UseCase
             const order = await this.getOrderByIdUseCase.execute(orderId);
 
-            // Retorna sucesso com o pedido
             const response = ok(order);
             return reply.status(response.statusCode).send(response.body);
         } catch (error) {
-            // Erro de pedido não encontrado
             if (error.message === 'Order not found') {
                 const response = badRequest(error.message);
                 return reply.status(response.statusCode).send(response.body);
             }
 
-            // Erro genérico
             console.error('Error in GetOrderByIdController:', error);
             const response = serverError();
             return reply.status(response.statusCode).send(response.body);
