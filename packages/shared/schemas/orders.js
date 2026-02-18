@@ -96,6 +96,16 @@ export const updateItemInOrderSchema = z
         message: 'At least one field must be provided for update',
     });
 
+// Schema para atualizar cliente no pedido (todos campos opcionais)
+export const updateCustomerSchema = z
+    .object({
+        name: z.string().optional(),
+        phone: z.string().optional(),
+    })
+    .refine((data) => Object.keys(data).length > 0, {
+        message: 'At least one field must be provided for update',
+    });
+
 // Formas de pagamento aceitas
 const PAYMENT_ORIGINS = ['CREDIT_CARD', 'DEBIT_CARD', 'CASH', 'PIX', 'VR'];
 

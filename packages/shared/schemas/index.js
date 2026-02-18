@@ -3,6 +3,7 @@ export {
     createOrderSchema,
     addItemToOrderSchema,
     updateItemInOrderSchema,
+    updateCustomerSchema,
     addPaymentToOrderSchema,
     addDeliveryAddressToOrderSchema,
     orderIdParamSchema,
