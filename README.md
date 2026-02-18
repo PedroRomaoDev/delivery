@@ -12,6 +12,7 @@ Sistema de gerenciamento de pedidos para serviços de delivery, desenvolvido seg
 - [Pré-requisitos](#pré-requisitos)
 - [Instalação](#instalação)
 - [Execução](#execução)
+- [Docker](#docker)
 - [Testes](#testes)
 - [Documentação da API](#documentação-da-api)
 - [Padrões de Desenvolvimento](#padrões-de-desenvolvimento)
@@ -128,6 +129,11 @@ DRAFT → RECEIVED → CONFIRMED → DISPATCHED → DELIVERED
     - Integrado com ESLint via lint-staged
 - **EditorConfig**: Padronização de editores
     - Configuração: `.editorconfig`
+
+### Containerização
+
+- **Docker**: Containerização da aplicação
+- **Docker Compose**: Orquestração de containers
     - Indentação, encoding, line endings
 - **Husky**: Git hooks automatizados
     - Pre-commit: lint-staged
@@ -229,9 +235,48 @@ cd apps/api
 pnpm run dev
 ```
 
-A API estará disponível em: `http://localhost:3000`
+A API estará disponível em: `http://localhost:8080`
 
-Interface Swagger UI: `http://localhost:3000/docs`
+Interface Swagger UI: `http://localhost:8080/docs`
+
+### Produção
+
+```bash
+# Executar API em modo produção
+cd apps/api
+node api-server.js
+```
+
+## Docker
+
+A aplicação está containerizada e pronta para ser executada em containers Docker.
+
+**Para guia completo, consulte [DOCKER.md](DOCKER.md)**
+
+### Início Rápido
+
+```bash
+# Na raiz do projeto
+docker-compose up -d
+
+# Ou usando npm scripts
+pnpm run docker:up
+```
+
+A API estará disponível em:
+
+- **API**: `http://localhost:8080`
+- **Swagger UI**: `http://localhost:8080/docs`
+
+### Scripts Disponíveis
+
+```bash
+pnpm run docker:build      # Build da imagem
+pnpm run docker:up         # Iniciar container
+pnpm run docker:down       # Parar container
+pnpm run docker:logs       # Ver logs
+pnpm run docker:rebuild    # Rebuild completo
+```
 
 ## Testes
 

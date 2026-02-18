@@ -21,8 +21,8 @@ So ai o objeto esta completo, obrigando o usuario a seguir os steps
 adicionar deleção de item
 adicionar pesquisa de item
 
-adicionar cancelamento de pedido (permitir cancelar pedido que esteja em DRAFT, RECEIVED ou CONFIRMED, mas não permitir cancelar pedido que já esteja DISPATCHED ou DELIVERED)
+adicionar cancelamento de pedido (permitir cancelar pedido que esteja em DRAFT, RECEIVED ou CONFIRMED,
+mas não permitir cancelar pedido que já esteja DISPATCHED ou DELIVERED)
 
-
-
-FALTA O DOCKER RAPAZ!
+Em sistemas de delivery, o "delete" de pedido é sempre uma exclusão lógica (soft delete) através do cancelamento,
+não uma exclusão física (hard delete).

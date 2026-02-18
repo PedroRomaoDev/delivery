@@ -1726,7 +1726,7 @@ app.route({
 const start = async () => {
     try {
         await app.ready();
-        await app.listen({ port: 8080 });
+        await app.listen({ port: 8080, host: '0.0.0.0' });
         console.log('Server running at http://localhost:8080');
         console.log('Swagger docs at http://localhost:8080/docs');
     } catch (err) {

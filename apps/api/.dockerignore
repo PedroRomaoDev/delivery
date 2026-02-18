@@ -1,0 +1,58 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Test coverage
+coverage
+**/coverage
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+docs
+
+# Test files
+*.test.js
+**/*.test.js
+
+# Config files
+.editorconfig
+.prettierrc.json
+.lintstagedrc.json
+eslint.config.js
+jest.config.js
+babel.config.cjs
+.babelrc
+
+# Husky
+.husky
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Misc
+.DS_Store

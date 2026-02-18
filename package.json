@@ -5,7 +5,12 @@
     "type": "module",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepare": "husky"
+        "prepare": "husky",
+        "docker:build": "docker build -f apps/api/Dockerfile -t delivery-api:latest .",
+        "docker:up": "docker-compose up -d",
+        "docker:down": "docker-compose down",
+        "docker:logs": "docker-compose logs -f api",
+        "docker:rebuild": "docker-compose build --no-cache && docker-compose up -d"
     },
     "keywords": [],
     "author": "",
