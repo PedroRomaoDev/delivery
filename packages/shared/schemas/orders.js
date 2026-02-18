@@ -62,6 +62,40 @@ export const orderIdParamSchema = z.object({
         .uuid('orderId must be a valid UUID'),
 });
 
+// Schema para parâmetros de rota (orderId + code)
+export const itemCodeParamSchema = z.object({
+    id: z
+        .string({
+            required_error: 'orderId is required',
+            invalid_type_error: 'orderId must be a string',
+        })
+        .uuid('orderId must be a valid UUID'),
+    code: z.coerce
+        .number({
+            required_error: 'code is required',
+            invalid_type_error: 'code must be a number',
+        })
+        .int('code must be an integer')
+        .positive('code must be a positive number'),
+});
+
+// Schema para atualizar item no pedido (todos campos opcionais)
+export const updateItemInOrderSchema = z
+    .object({
+        quantity: z
+            .number({
+                invalid_type_error: 'quantity must be a number',
+            })
+            .int('quantity must be an integer')
+            .positive('quantity must be a positive number')
+            .optional(),
+        name: z.string().optional().nullable(),
+        observations: z.string().optional().nullable(),
+    })
+    .refine((data) => Object.keys(data).length > 0, {
+        message: 'At least one field must be provided for update',
+    });
+
 // Formas de pagamento aceitas
 const PAYMENT_ORIGINS = ['CREDIT_CARD', 'DEBIT_CARD', 'CASH', 'PIX', 'VR'];
 
