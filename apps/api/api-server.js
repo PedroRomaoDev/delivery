@@ -11,6 +11,7 @@ import {
     makeConfirmOrderController,
     makeDispatchOrderController,
     makeDeliverOrderController,
+    makeCancelOrderController,
 } from './src/factories/index.js';
 
 const app = fastify();
@@ -51,6 +52,7 @@ const receiveOrderController = makeReceiveOrderController();
 const confirmOrderController = makeConfirmOrderController();
 const dispatchOrderController = makeDispatchOrderController();
 const deliverOrderController = makeDeliverOrderController();
+const cancelOrderController = makeCancelOrderController();
 
 app.route({
     method: 'POST',
@@ -1162,6 +1164,131 @@ app.route({
     },
     handler: async (request, reply) => {
         return deliverOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'POST',
+    url: '/orders/:id/cancel',
+    schema: {
+        tags: ['Transição de Estado'],
+        summary:
+            'Cancelar pedido (transição de DRAFT|RECEIVED|CONFIRMED → CANCELED)',
+        description:
+            'Transiciona um pedido dos status DRAFT, RECEIVED ou CONFIRMED para CANCELED. ' +
+            'Valida que o pedido está em um dos estados canceláveis antes de cancelar. ' +
+            'Pedidos em DISPATCHED ou DELIVERED não podem ser cancelados.',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    description: 'ID do pedido',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Order canceled successfully',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            payments: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        payment_type: { type: 'string' },
+                                        payment_method: { type: 'string' },
+                                        value: { type: 'number' },
+                                    },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                },
+                            },
+                            total_price: { type: 'number' },
+                            items: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        quantity: { type: 'integer' },
+                                        unit_price: { type: 'number' },
+                                        total_price: { type: 'number' },
+                                    },
+                                },
+                            },
+                            created_at: { type: 'string' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        description: { type: 'string' },
+                                        date: { type: 'string' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    phone: { type: 'string' },
+                                },
+                            },
+                            delivery_address: {
+                                type: 'object',
+                                properties: {
+                                    street: { type: 'string' },
+                                    number: { type: 'string' },
+                                    neighborhood: { type: 'string' },
+                                    city: { type: 'string' },
+                                    state: { type: 'string' },
+                                    zip_code: { type: 'string' },
+                                    coordinates: {
+                                        type: 'object',
+                                        properties: {
+                                            id: { type: 'integer' },
+                                            latitude: { type: 'number' },
+                                            longitude: { type: 'number' },
+                                        },
+                                    },
+                                },
+                            },
+                            order_id: { type: 'string' },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Validation error or business rule violation',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Internal server error',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return cancelOrderController.handle(request, reply);
     },
 });
 
