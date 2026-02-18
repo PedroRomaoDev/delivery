@@ -195,7 +195,13 @@ Permite atualizar um item existente no pedido.
 
 DELETE /orders/:id/items/:code
 
-**Status:** ⚠️ **Não implementado ainda**
+**Status:** ✅ **Implementado**
+
+**Regras:**
+
+- Apenas pedidos em DRAFT podem ter items removidos
+- O código do item deve existir no pedido
+- Retorna o pedido atualizado com o item removido
 
 ---
 
@@ -252,7 +258,28 @@ POST /orders/:id/delivery-address
 
 PATCH /orders/:id/customer
 
-**Status:** ⚠️ **Não implementado ainda**
+**Descrição:** Atualiza os dados do cliente (nome e/ou telefone) de um pedido em estado DRAFT.
+
+**Requisitos:**
+
+- Pedido deve estar em estado DRAFT
+- Pelo menos um campo deve ser fornecido (name ou phone)
+- Campos opcionais: name, phone
+
+**Body:**
+
+```json
+{
+    "name": "Maria Santos",
+    "phone": "11999999999"
+}
+```
+
+**Validações:**
+
+- name: deve ser string não vazia
+- phone: deve ser string não vazia
+- Pelo menos um campo deve ser fornecido
 
 ---
 
@@ -377,7 +404,7 @@ Cancelamento permitido até CONFIRMED.
 
 ---
 
-## 10. Resultado Esperado
+## 10. Resultado
 
 - API consistente
 - Separação clara entre estrutura e comportamento
@@ -397,6 +424,7 @@ Cancelamento permitido até CONFIRMED.
 - ✅ GET /orders/:id - Buscar pedido por ID
 - ✅ POST /orders/:id/items - Adicionar item ao pedido
 - ✅ PATCH /orders/:id/items/:code - Atualizar item no pedido
+- ✅ PATCH /orders/:id/customer - Atualizar cliente do pedido
 - ✅ POST /orders/:id/payments - Adicionar pagamento/atualizar ao pedido
 - ✅ POST /orders/:id/delivery-address - Adicionar/atualizar endereço de entrega
 
@@ -416,13 +444,7 @@ Cancelamento permitido até CONFIRMED.
 - ✅ Validação de fluxo: items → payment → delivery address
 - ✅ Payment override (POST /payments sobrescreve pagamento existente)
 - ✅ Delivery address override (POST /delivery-address sobrescreve endereço existente)
-
-### ⚠️ Não Implementado
-
-**Operações de Edição/Remoção:**
-
-- ⚠️ DELETE /orders/:id/items/:code - Remover item
-- ⚠️ PATCH /orders/:id/customer - Atualizar cliente
+- ✅ DELETE /orders/:id/items/:code - Remover item
 
 ### ❌ Removido da Especificação
 

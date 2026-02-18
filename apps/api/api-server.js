@@ -14,6 +14,8 @@ import {
     makeCancelOrderController,
     makeGetOrderByIdController,
     makeUpdateItemInOrderController,
+    makeUpdateCustomerInOrderController,
+    makeRemoveItemFromOrderController,
 } from './src/factories/index.js';
 
 const app = fastify();
@@ -57,6 +59,8 @@ const deliverOrderController = makeDeliverOrderController();
 const cancelOrderController = makeCancelOrderController();
 const getOrderByIdController = makeGetOrderByIdController();
 const updateItemInOrderController = makeUpdateItemInOrderController();
+const updateCustomerInOrderController = makeUpdateCustomerInOrderController();
+const removeItemFromOrderController = makeRemoveItemFromOrderController();
 
 app.route({
     method: 'POST',
@@ -288,9 +292,84 @@ app.route({
 
 app.route({
     method: 'PATCH',
+    url: '/orders/:id/customer',
+    schema: {
+        tags: ['Mudar informações do pedido'],
+        summary: 'Atualizar cliente do pedido (apenas em DRAFT)',
+        description:
+            'Atualiza os dados do cliente de um pedido em estado DRAFT. Pelo menos um campo (name ou phone) deve ser fornecido para atualização.',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    format: 'uuid',
+                    description: 'ID do pedido (UUID)',
+                },
+            },
+        },
+        body: {
+            type: 'object',
+            minProperties: 1,
+            properties: {
+                name: {
+                    type: 'string',
+                    description: 'Nome do cliente',
+                },
+                phone: {
+                    type: 'string',
+                    description: 'Telefone do cliente',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Cliente atualizado com sucesso',
+                type: 'object',
+                properties: {
+                    store_id: { type: 'string' },
+                    order_id: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    temporary_phone: { type: 'string' },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Erro de validação ou pedido não está em DRAFT',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Erro interno do servidor',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return updateCustomerInOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'PATCH',
     url: '/orders/:id/items/:code',
     schema: {
-        tags: ['Construção Incremental'],
+        tags: ['Mudar informações do pedido'],
         summary: 'Atualizar item no pedido (apenas em DRAFT)',
         description:
             'Atualiza um item existente no pedido. Permite atualizar quantidade, nome e observações. Apenas disponível para pedidos em estado DRAFT.',
@@ -533,6 +612,71 @@ app.route({
     },
     handler: async (request, reply) => {
         return addPaymentToOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'DELETE',
+    url: '/orders/:id/items/:code',
+    schema: {
+        tags: ['Mudar informações do pedido'],
+        summary: 'Remover item do pedido (apenas em DRAFT)',
+        description:
+            'Remove um item existente do pedido. Apenas disponível para pedidos em estado DRAFT.',
+        params: {
+            type: 'object',
+            required: ['id', 'code'],
+            properties: {
+                id: {
+                    type: 'string',
+                    format: 'uuid',
+                    description: 'ID do pedido (UUID)',
+                },
+                code: {
+                    type: 'integer',
+                    description: 'Código do item a ser removido',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Item removido com sucesso',
+                type: 'object',
+                properties: {
+                    store_id: { type: 'string' },
+                    order_id: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'string' },
+                            status: { type: 'string' },
+                            customer: { type: 'object' },
+                            items: { type: 'array' },
+                            payments: { type: 'array' },
+                            delivery_address: { type: ['object', 'null'] },
+                        },
+                    },
+                },
+            },
+            400: {
+                description:
+                    'Erro de validação, item não encontrado ou pedido não está em DRAFT',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+            500: {
+                description: 'Erro interno do servidor',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return removeItemFromOrderController.handle(request, reply);
     },
 });
 
