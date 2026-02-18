@@ -8,3 +8,5 @@ export * from './controllers/ConfirmOrder.js';
 export * from './controllers/DispatchOrder.js';
 export * from './controllers/DeliverOrder.js';
 export * from './controllers/CancelOrder.js';
+export * from './controllers/GetOrderById.js';
+export * from './controllers/UpdateItemInOrder.js';

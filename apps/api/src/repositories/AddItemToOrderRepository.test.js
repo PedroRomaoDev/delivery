@@ -40,6 +40,11 @@ describe('AddItemToOrderRepository', () => {
             JSON.stringify(testOrders, null, 2),
             'utf-8',
         );
+
+        // Garante que o arquivo foi escrito
+        const handle = await fs.open(tempFilePath, 'r+');
+        await handle.sync();
+        await handle.close();
     });
 
     afterEach(async () => {
@@ -144,6 +149,11 @@ describe('AddItemToOrderRepository', () => {
             JSON.stringify(orders, null, 2),
             'utf-8',
         );
+
+        // Garante que o arquivo foi escrito
+        const handle = await fs.open(tempFilePath, 'r+');
+        await handle.sync();
+        await handle.close();
 
         const repository = new AddItemToOrderRepository(tempFilePath);
 
