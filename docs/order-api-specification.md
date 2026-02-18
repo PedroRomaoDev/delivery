@@ -138,8 +138,6 @@ GET /orders/:id
 
 Retorna snapshot completo do pedido.
 
-**Status:** ⚠️ **Não implementado ainda**
-
 ---
 
 ### 5.3 Construção Incremental (Somente DRAFT)
@@ -172,7 +170,24 @@ POST /orders/:id/items
 
 PATCH /orders/:id/items/:code
 
-**Status:** ⚠️ **Não implementado ainda**
+Permite atualizar um item existente no pedido.
+
+```json
+{
+    "quantity": 3,
+    "name": "Nome atualizado",
+    "observations": "Novas observações"
+}
+```
+
+**Regras:**
+
+- Todos os campos são opcionais, mas pelo menos um deve ser fornecido
+- `quantity`: Nova quantidade (deve ser ≥ 1)
+- `name`: Novo nome do item
+- `observations`: Novas observações
+- O preço (`price`) NÃO pode ser alterado (vem do catálogo)
+- Pedido deve estar em DRAFT
 
 ---
 
@@ -379,7 +394,9 @@ Cancelamento permitido até CONFIRMED.
 
 - ✅ POST /orders - Criar pedido
 - ✅ GET /orders - Listar pedidos
+- ✅ GET /orders/:id - Buscar pedido por ID
 - ✅ POST /orders/:id/items - Adicionar item ao pedido
+- ✅ PATCH /orders/:id/items/:code - Atualizar item no pedido
 - ✅ POST /orders/:id/payments - Adicionar pagamento/atualizar ao pedido
 - ✅ POST /orders/:id/delivery-address - Adicionar/atualizar endereço de entrega
 
@@ -402,13 +419,8 @@ Cancelamento permitido até CONFIRMED.
 
 ### ⚠️ Não Implementado
 
-**Consulta:**
-
-- ⚠️ GET /orders/:id - Buscar pedido por ID
-
 **Operações de Edição/Remoção:**
 
-- ⚠️ PATCH /orders/:id/items/:code - Atualizar item
 - ⚠️ DELETE /orders/:id/items/:code - Remover item
 - ⚠️ PATCH /orders/:id/customer - Atualizar cliente
 
@@ -418,7 +430,6 @@ Cancelamento permitido até CONFIRMED.
 
 - ❌ DELETE /orders/:id/payments - Removido (POST /payments sobrescreve)
 - ❌ DELETE /orders/:id/delivery-address - Removido (POST /delivery-address sobrescreve)
-
 
 ### State Diagram - Order Lifecycle
 
@@ -446,3 +457,4 @@ stateDiagram-v2
 
 
 
+```

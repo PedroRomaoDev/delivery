@@ -12,6 +12,8 @@ import {
     makeDispatchOrderController,
     makeDeliverOrderController,
     makeCancelOrderController,
+    makeGetOrderByIdController,
+    makeUpdateItemInOrderController,
 } from './src/factories/index.js';
 
 const app = fastify();
@@ -53,6 +55,8 @@ const confirmOrderController = makeConfirmOrderController();
 const dispatchOrderController = makeDispatchOrderController();
 const deliverOrderController = makeDeliverOrderController();
 const cancelOrderController = makeCancelOrderController();
+const getOrderByIdController = makeGetOrderByIdController();
+const updateItemInOrderController = makeUpdateItemInOrderController();
 
 app.route({
     method: 'POST',
@@ -279,6 +283,145 @@ app.route({
     },
     handler: async (request, reply) => {
         return addItemToOrderController.handle(request, reply);
+    },
+});
+
+app.route({
+    method: 'PATCH',
+    url: '/orders/:id/items/:code',
+    schema: {
+        tags: ['Construção Incremental'],
+        summary: 'Atualizar item no pedido (apenas em DRAFT)',
+        description:
+            'Atualiza um item existente no pedido. Permite atualizar quantidade, nome e observações. Apenas disponível para pedidos em estado DRAFT.',
+        params: {
+            type: 'object',
+            required: ['id', 'code'],
+            properties: {
+                id: {
+                    type: 'string',
+                    format: 'uuid',
+                    description: 'ID do pedido',
+                },
+                code: {
+                    type: 'integer',
+                    description: 'Código do item',
+                },
+            },
+        },
+        body: {
+            type: 'object',
+            minProperties: 1,
+            properties: {
+                quantity: {
+                    type: 'integer',
+                    minimum: 1,
+                    description: 'Nova quantidade do item',
+                },
+                name: {
+                    type: 'string',
+                    description: 'Novo nome do item',
+                },
+                observations: {
+                    type: 'string',
+                    description: 'Novas observações sobre o item',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Item atualizado com sucesso',
+                type: 'object',
+                properties: {
+                    store_id: { type: 'string' },
+                    order_id: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            payments: { type: 'array' },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    id: { type: 'string' },
+                                },
+                            },
+                            total_price: { type: 'number' },
+                            items: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        code: { type: 'number' },
+                                        price: { type: 'number' },
+                                        observations: {
+                                            type: ['string', 'null'],
+                                        },
+                                        total_price: { type: 'number' },
+                                        name: { type: 'string' },
+                                        quantity: { type: 'number' },
+                                        discount: { type: 'number' },
+                                        condiments: {
+                                            type: 'array',
+                                            items: {},
+                                        },
+                                    },
+                                },
+                            },
+                            created_at: { type: 'number' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        name: { type: 'string' },
+                                        created_at: { type: 'number' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
+                            delivery_address: { type: ['object', 'null'] },
+                        },
+                    },
+                },
+            },
+            400: {
+                description:
+                    'Dados inválidos, pedido não encontrado, item não encontrado ou pedido não está em DRAFT',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    errors: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                field: { type: 'string' },
+                                message: { type: 'string' },
+                            },
+                        },
+                    },
+                },
+            },
+            500: {
+                description: 'Erro interno do servidor',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return updateItemInOrderController.handle(request, reply);
     },
 });
 
@@ -671,6 +814,150 @@ app.route({
     },
     handler: async (request, reply) => {
         return findAllOrdersController.execute(request, reply);
+    },
+});
+
+app.route({
+    method: 'GET',
+    url: '/orders/:id',
+    schema: {
+        tags: ['Consulta de Pedidos'],
+        summary: 'Buscar pedido por ID',
+        description: 'Retorna os detalhes completos de um pedido específico',
+        params: {
+            type: 'object',
+            required: ['id'],
+            properties: {
+                id: {
+                    type: 'string',
+                    format: 'uuid',
+                    description: 'ID do pedido',
+                },
+            },
+        },
+        response: {
+            200: {
+                description: 'Pedido retornado com sucesso',
+                type: 'object',
+                properties: {
+                    store_id: { type: 'string' },
+                    order_id: { type: 'string' },
+                    order: {
+                        type: 'object',
+                        properties: {
+                            payments: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        prepaid: { type: 'boolean' },
+                                        value: { type: 'number' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            last_status_name: { type: 'string' },
+                            store: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    id: { type: 'string' },
+                                },
+                            },
+                            total_price: { type: 'number' },
+                            items: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        code: { type: 'number' },
+                                        price: { type: 'number' },
+                                        observations: {
+                                            type: ['string', 'null'],
+                                        },
+                                        total_price: { type: 'number' },
+                                        name: { type: 'string' },
+                                        quantity: { type: 'number' },
+                                        discount: { type: 'number' },
+                                        condiments: {
+                                            type: 'array',
+                                            items: {},
+                                        },
+                                    },
+                                },
+                            },
+                            created_at: { type: 'number' },
+                            statuses: {
+                                type: 'array',
+                                items: {
+                                    type: 'object',
+                                    properties: {
+                                        created_at: { type: 'number' },
+                                        name: { type: 'string' },
+                                        origin: { type: 'string' },
+                                    },
+                                },
+                            },
+                            customer: {
+                                type: 'object',
+                                properties: {
+                                    temporary_phone: { type: 'string' },
+                                    name: { type: 'string' },
+                                },
+                            },
+                            delivery_address: {
+                                type: 'object',
+                                properties: {
+                                    reference: { type: 'string' },
+                                    street_name: { type: 'string' },
+                                    postal_code: { type: 'string' },
+                                    country: { type: 'string' },
+                                    city: { type: 'string' },
+                                    neighborhood: { type: 'string' },
+                                    street_number: { type: 'string' },
+                                    state: { type: 'string' },
+                                    coordinates: {
+                                        type: 'object',
+                                        properties: {
+                                            longitude: { type: 'number' },
+                                            latitude: { type: 'number' },
+                                            id: { type: 'number' },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            400: {
+                description: 'Pedido não encontrado ou ID inválido',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    errors: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                field: { type: 'string' },
+                                message: { type: 'string' },
+                            },
+                        },
+                    },
+                },
+            },
+            500: {
+                description: 'Erro interno do servidor',
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                },
+            },
+        },
+    },
+    handler: async (request, reply) => {
+        return getOrderByIdController.handle(request, reply);
     },
 });
 
