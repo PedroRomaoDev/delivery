@@ -107,6 +107,18 @@ class Order {
     }
 
     /**
+     * Verifica se o pedido pode ser cancelado
+     * @returns {boolean}
+     */
+    isCancelable() {
+        return (
+            this.status === 'DRAFT' ||
+            this.status === 'RECEIVED' ||
+            this.status === 'CONFIRMED'
+        );
+    }
+
+    /**
      * Adiciona um item ao pedido (apenas em DRAFT)
      * @param {Object} item - Item a ser adicionado
      * @param {number} item.code - Código do produto
@@ -363,6 +375,20 @@ class Order {
         }
 
         this.addStatusToHistory('DELIVERED', 'STORE');
+    }
+
+    /**
+     * Cancela o pedido (transição DRAFT|RECEIVED|CONFIRMED → CANCELED)
+     * @throws {Error} Se o pedido não puder ser cancelado
+     */
+    cancel() {
+        if (!this.isCancelable()) {
+            throw new Error(
+                'Only orders in DRAFT, RECEIVED, or CONFIRMED status can be canceled',
+            );
+        }
+
+        this.addStatusToHistory('CANCELED', 'STORE');
     }
 
     /**
