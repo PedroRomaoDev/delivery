@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import fastifyCors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import {
@@ -19,6 +20,11 @@ import {
 } from './src/factories/index.js';
 
 const app = fastify();
+
+await app.register(fastifyCors, {
+    origin: true,
+    credentials: true,
+});
 
 // Swagger configuration
 await app.register(fastifySwagger, {
