@@ -26,8 +26,9 @@ pnpm run docker:up
 
 ### 3. Acessar a aplicação
 
-- API: http://localhost:8080
-- Swagger: http://localhost:8080/docs
+- **Frontend**: http://localhost:3000
+- **API**: http://localhost:8080
+- **Swagger**: http://localhost:8080/docs
 
 ## Comandos Disponíveis
 
@@ -82,19 +83,43 @@ docker-compose up -d
 
 ```
 delivery/
-├── docker-compose.yml          # Orquestração de containers
+├── docker-compose.yml          # Orquestração de containers (API + Web)
 └── apps/
-    └── api/
-        ├── Dockerfile          # Build multi-stage
+    ├── api/
+    │   ├── Dockerfile          # Build multi-stage (Node.js)
+    │   └── .dockerignore       # Arquivos excluídos do build
+    └── web/
+        ├── Dockerfile          # Build multi-stage (Vite + Nginx)
+        ├── nginx.conf          # Configuração do servidor Nginx
         └── .dockerignore       # Arquivos excluídos do build
 ```
 
+## Serviços Docker
+
+O docker-compose provisiona dois serviços:
+
+### 🔹 **API (Backend)**
+
+- **Container**: `delivery-api`
+- **Porta**: 8080
+- **Tecnologia**: Node.js 20 Alpine + Fastify
+- **Health Check**: `curl -f http://localhost:8080`
+
+### 🔹 **Web (Frontend)**
+
+- **Container**: `delivery-web`
+- **Porta**: 3000
+- **Tecnologia**: Nginx Alpine servindo build do Vite (React)
+- **Proxy reverso**: Requisições `/api` são encaminhadas para o container da API
+- **Health Check**: `wget --spider http://localhost:3000`
+
 ## Notas Importantes
 
-1. **Workspaces**: O Dockerfile copia todos os workspaces necessários (`packages/helpers`, `packages/shared`)
+1. **Workspaces**: Os Dockerfiles copiam todos os workspaces necessários (`packages/helpers`, `packages/shared`)
 2. **Produção**: Apenas dependências de produção são instaladas no stage final com `--ignore-scripts` para evitar execução de hooks de desenvolvimento (como Husky)
-3. **Segurança**: Arquivos de desenvolvimento não são incluídos na imagem final
+3. **Segurança**: Arquivos de desenvolvimento não são incluídos nas imagens finais
 4. **Scripts de Lifecycle**: A flag `--ignore-scripts` previne a execução de scripts como `prepare` que tentam instalar ferramentas de desenvolvimento (Husky) desnecessárias em produção
+5. **Comunicação entre containers**: O frontend pode acessar a API através do proxy reverso configurado no Nginx
 
 ## Características de Segurança
 
@@ -102,8 +127,15 @@ A imagem Docker foi construída seguindo as melhores práticas de segurança:
 
 ### Base Image Atualizada
 
+**API:**
+
 - **Node.js 20 Alpine**: Versão LTS mais recente com patches de segurança aplicados
 - Imagem Alpine Linux reduz a superfície de ataque (menor que 5MB)
+
+**Web:**
+
+- **Nginx Alpine**: Servidor web leve e seguro
+- Build de produção otimizado com Vite
 
 ### Atualizações de Sistema
 
@@ -112,24 +144,43 @@ A imagem Docker foi construída seguindo as melhores práticas de segurança:
 
 ### Execução como Usuário Não-Root
 
+**API:**
+
 ```dockerfile
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 USER nodejs
 ```
 
-- Aplicação roda com UID 1001 (usuário `nodejs`)
+**Web:**
+
+```dockerfile
+RUN addgroup -g 1001 -S appuser && \
+    adduser -S appuser -u 1001
+USER appuser
+```
+
+- Aplicações rodam com UID 1001 (usuários dedicados)
 - Previne escalada de privilégios em caso de comprometimento
 - Princípio do menor privilégio aplicado
 
 ### Health Checks Integrados
+
+**API:**
 
 ```dockerfile
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8080 || exit 1
 ```
 
-- Monitoramento automático do estado do container
+**Web:**
+
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
+```
+
+- Monitoramento automático do estado dos containers
 - Reinício automático em caso de falha
 - Intervalo de verificação: 30 segundos
 
