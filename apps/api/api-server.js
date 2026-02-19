@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import fastifyCors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import {
@@ -20,16 +21,66 @@ import {
 
 const app = fastify();
 
+await app.register(fastifyCors, {
+    origin: true,
+    credentials: true,
+});
+
 // Swagger configuration
 await app.register(fastifySwagger, {
     openapi: {
         info: {
             title: 'Delivery API',
             description:
-                'API RESTful para gerenciamento de pedidos de delivery seguindo princípios de Domain-Driven Design (DDD) e Clean Architecture. ' +
-                'Os pedidos são construídos de forma incremental (como um carrinho de compras): ' +
-                '(1) Criar pedido em DRAFT, (2) Adicionar itens, (3) Adicionar pagamentos, (4) Definir endereço de entrega, (5) Confirmar pedido. ' +
-                'Oferece endpoints para criação, consulta e gerenciamento completo do ciclo de vida dos pedidos.',
+                '# API de Gerenciamento de Pedidos para Delivery\n\n' +
+                '## Arquitetura\n' +
+                'API RESTful construída com **Domain-Driven Design (DDD)** e **Clean Architecture**, garantindo separação de responsabilidades, ' +
+                'isolamento de regras de negócio no Aggregate Root e máxima testabilidade (335 testes automatizados).\n\n' +
+                '## Máquina de Estados Rigorosa\n' +
+                'Cada pedido segue um fluxo de estados bem definido:\n' +
+                '```\n' +
+                'DRAFT → RECEIVED → CONFIRMED → DISPATCHED → DELIVERED\n' +
+                '  ↓         ↓          ↓\n' +
+                '  └─────────┴──────────┴─→ CANCELED\n' +
+                '```\n\n' +
+                '## Regras de Negócio Críticas\n\n' +
+                '### 1. Imutabilidade Estrutural\n' +
+                '- **Modificações estruturais APENAS em estado DRAFT**: Adicionar/remover itens, alterar cliente, pagamentos e endereço só é permitido quando `last_status_name === "DRAFT"`\n' +
+                '- **Após sair de DRAFT**: A estrutura do pedido torna-se imutável (apenas transições de estado são permitidas)\n' +
+                '- **Validação rigorosa**: Tentativas de modificação fora de DRAFT retornam erro 400\n\n' +
+                '### 2. Construção Incremental do Pedido\n\n' +
+                '**Fluxo obrigatório para criação:**\n\n' +
+                '1. **POST /orders** - Criar pedido em DRAFT (requer: customer.name, customer.phone)\n' +
+                '2. **POST /orders/:id/items** - Adicionar itens (1..N vezes, requer: code, quantity)\n' +
+                '3. **POST /orders/:id/payments** - Adicionar forma de pagamento (requer: origin)\n' +
+                '4. **POST /orders/:id/delivery-address** - Definir endereço de entrega (requer: rua, número, cidade, estado, CEP, país)\n' +
+                '5. **POST /orders/:id/receive** - Confirmar recebimento do pedido (transição DRAFT → RECEIVED)\n\n' +
+                '**Operações opcionais em DRAFT:**\n' +
+                '- **PATCH /orders/:id/items/:code** - Atualizar item existente\n' +
+                '- **DELETE /orders/:id/items/:code** - Remover item\n' +
+                '- **PATCH /orders/:id/customer** - Atualizar dados do cliente\n\n' +
+                '### 3. Validações de Integridade\n\n' +
+                '- **Pedido completo**: Ao receber (DRAFT → RECEIVED), valida que o pedido possui pelo menos 1 item, 1 pagamento e endereço de entrega\n' +
+                '- **Totais consistentes**: Soma do valor dos pagamentos deve corresponder ao total do pedido\n' +
+                '- **Cálculos automáticos**: Preços dos itens e valores de pagamento são calculados automaticamente\n\n' +
+                '### 4. Geocoding Automático\n\n' +
+                '- Coordenadas geográficas (latitude/longitude) são calculadas automaticamente via **OpenStreetMap Nominatim** ao adicionar endereço de entrega\n' +
+                '- Se fornecidas manualmente, as coordenadas são validadas mas não recalculadas\n\n' +
+                '### 5. Transições de Estado\n\n' +
+                '**Após sair de DRAFT, as seguintes transições são permitidas:**\n\n' +
+                '- **POST /orders/:id/confirm** - RECEIVED → CONFIRMED (loja confirma o pedido)\n' +
+                '- **POST /orders/:id/dispatch** - CONFIRMED → DISPATCHED (pedido saiu para entrega)\n' +
+                '- **POST /orders/:id/deliver** - DISPATCHED → DELIVERED (entrega concluída - estado final)\n' +
+                '- **POST /orders/:id/cancel** - DRAFT/RECEIVED/CONFIRMED → CANCELED (cancelamento - estado final)\n\n' +
+                '**Transições inválidas retornam erro 400 com mensagem descritiva**\n\n' +
+                '## Consultas\n\n' +
+                '- **GET /orders** - Listar todos os pedidos (qualquer estado)\n' +
+                '- **GET /orders/:id** - Buscar pedido específico por ID UUID\n\n' +
+                '## Tecnologias\n\n' +
+                '- **Fastify** (framework web de alta performance)\n' +
+                '- **Zod** (validação de schemas e tipos)\n' +
+                '- **OpenStreetMap Nominatim** (geocoding)\n' +
+                '- **Jest** (335 testes automatizados)',
             version: '1.0.0',
         },
         servers: [

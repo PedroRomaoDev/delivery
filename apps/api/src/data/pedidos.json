@@ -1,254 +1,313 @@
 [
-    {
-        "store_id": "f052054c-e0a0-4768-ab55-7cb7ead57371",
-        "order_id": "a1b2c3d4-e5f6-4788-a999-b1c2d3e4f501",
-        "order": {
-            "payments": [
-                {
-                    "prepaid": true,
-                    "value": 89.9,
-                    "origin": "CREDIT_CARD"
-                }
-            ],
-            "last_status_name": "CONFIRMED",
-            "store": {
-                "name": "Coco Bambu Loja Teste",
-                "id": "f052054c-e0a0-4768-ab55-7cb7ead57371"
-            },
-            "total_price": 89.9,
-            "items": [
-                {
-                    "code": 4012,
-                    "price": 89.9,
-                    "observations": "Sem cebola",
-                    "total_price": 89.9,
-                    "name": "Camarao Alfredo",
-                    "quantity": 1,
-                    "discount": 0,
-                    "condiments": []
-                }
-            ],
-            "created_at": 1770842000000,
-            "statuses": [
-                {
-                    "created_at": 1770842000500,
-                    "name": "RECEIVED",
-                    "origin": "STORE"
-                },
-                {
-                    "created_at": 1770842100000,
-                    "name": "CONFIRMED",
-                    "origin": "STORE"
-                }
-            ],
-            "customer": {
-                "temporary_phone": "+556199998888",
-                "name": "Ana Clara Silva"
-            },
-            "delivery_address": {
-                "reference": "Portão A",
-                "street_name": "Rua das Pitangueiras",
-                "postal_code": "71.900-100",
-                "country": "BR",
-                "city": "Brasília",
-                "neighborhood": "Águas Claras",
-                "street_number": "1050",
-                "state": "Distrito Federal",
-                "coordinates": {
-                    "longitude": -48.025,
-                    "latitude": -15.835,
-                    "id": 1323150
-                }
-            }
+  {
+    "store_id": "f052054c-e0a0-4768-ab55-7cb7ead57371",
+    "order_id": "a1b2c3d4-e5f6-4788-a999-b1c2d3e4f501",
+    "order": {
+      "payments": [
+        {
+          "prepaid": true,
+          "value": 89.9,
+          "origin": "CREDIT_CARD"
         }
-    },
-    {
-        "store_id": "98765432-abcd-ef00-1234-567890abcdef",
-        "order_id": "1c92bc9f-6de2-4d24-9d1c-e3271e8bb998",
-        "order": {
-            "payments": [
-                {
-                    "prepaid": true,
-                    "value": 54,
-                    "origin": "PIX"
-                }
-            ],
-            "last_status_name": "CANCELED",
-            "store": {
-                "name": "COCO BAMBU CHIQUE CHIQUE",
-                "id": "98765432-abcd-ef00-1234-567890abcdef"
-            },
-            "total_price": 54,
-            "items": [
-                {
-                    "code": 105,
-                    "price": 54,
-                    "observations": null,
-                    "total_price": 54,
-                    "name": "Camarao Delicia",
-                    "quantity": 1,
-                    "discount": 0,
-                    "condiments": []
-                }
-            ],
-            "created_at": 1770843000000,
-            "statuses": [
-                {
-                    "created_at": 1770843000500,
-                    "name": "RECEIVED",
-                    "origin": "STORE"
-                },
-                {
-                    "created_at": 1770843200000,
-                    "name": "CANCELED",
-                    "origin": "STORE"
-                }
-            ],
-            "customer": {
-                "temporary_phone": "+556198887777",
-                "name": "Carlos Eduardo Souza"
-            },
-            "delivery_address": {
-                "reference": "Ao lado da padaria",
-                "street_name": "SQN 202",
-                "postal_code": "70.832-000",
-                "country": "BR",
-                "city": "Brasília",
-                "neighborhood": "Asa Norte",
-                "street_number": "Bloco B",
-                "state": "Distrito Federal",
-                "coordinates": {
-                    "longitude": -47.88,
-                    "latitude": -15.78,
-                    "id": 1323160
-                }
-            }
+      ],
+      "last_status_name": "CONFIRMED",
+      "store": {
+        "name": "Coco Bambu Loja Teste",
+        "id": "f052054c-e0a0-4768-ab55-7cb7ead57371"
+      },
+      "total_price": 89.9,
+      "items": [
+        {
+          "code": 4012,
+          "price": 89.9,
+          "observations": "Sem cebola",
+          "total_price": 89.9,
+          "name": "Camarao Alfredo",
+          "quantity": 1,
+          "discount": 0,
+          "condiments": []
         }
-    },
-    {
-        "store_id": "f052054c-e0a0-4768-ab55-7cb7ead57371",
-        "order_id": "293890c2-82a9-4f4f-b55e-7cb45c69e1e5",
-        "order": {
-            "payments": [
-                {
-                    "prepaid": true,
-                    "value": 250.5,
-                    "origin": "VR"
-                }
-            ],
-            "last_status_name": "DISPATCHED",
-            "store": {
-                "name": "Coco Bambu Loja Teste",
-                "id": "f052054c-e0a0-4768-ab55-7cb7ead57371"
-            },
-            "total_price": 250.5,
-            "items": [
-                {
-                    "code": 5001,
-                    "price": 250.5,
-                    "observations": null,
-                    "total_price": 250.5,
-                    "name": "Camarão Internacional (Serve 4)",
-                    "quantity": 1,
-                    "discount": 0,
-                    "condiments": []
-                }
-            ],
-            "created_at": 1770835000000,
-            "statuses": [
-                {
-                    "created_at": 1770835000500,
-                    "name": "RECEIVED",
-                    "origin": "STORE"
-                },
-                {
-                    "created_at": 1770835100000,
-                    "name": "CONFIRMED",
-                    "origin": "STORE"
-                },
-                {
-                    "created_at": 1770838000000,
-                    "name": "DISPATCHED",
-                    "origin": "STORE"
-                }
-            ],
-            "customer": {
-                "temporary_phone": "+556197776666",
-                "name": "Fernanda Lima"
-            },
-            "delivery_address": {
-                "reference": "Casa Amarela",
-                "street_name": "SHIS QI 05",
-                "postal_code": "71.615-000",
-                "country": "BR",
-                "city": "Brasília",
-                "neighborhood": "Lago Sul",
-                "street_number": "Conjunto 9",
-                "state": "Distrito Federal",
-                "coordinates": {
-                    "longitude": -47.9,
-                    "latitude": -15.85,
-                    "id": 1323170
-                }
-            }
+      ],
+      "created_at": 1770842000000,
+      "statuses": [
+        {
+          "created_at": 1770842000500,
+          "name": "RECEIVED",
+          "origin": "STORE"
+        },
+        {
+          "created_at": 1770842100000,
+          "name": "CONFIRMED",
+          "origin": "STORE"
         }
-    },
-    {
-        "store_id": "98765432-abcd-ef00-1234-567890abcdef",
-        "order_id": "e39deb10-d73a-4438-a0b8-0a2985785094",
-        "order": {
-            "payments": [
-                {
-                    "prepaid": false,
-                    "value": 35.9,
-                    "origin": "CASH"
-                }
-            ],
-            "last_status_name": "RECEIVED",
-            "store": {
-                "name": "COCO BAMBU CHIQUE CHIQUE",
-                "id": "98765432-abcd-ef00-1234-567890abcdef"
-            },
-            "total_price": 35.9,
-            "items": [
-                {
-                    "code": 202,
-                    "price": 35.9,
-                    "observations": null,
-                    "total_price": 35.9,
-                    "name": "Batata Frita Especial",
-                    "quantity": 1,
-                    "discount": 0,
-                    "condiments": []
-                }
-            ],
-            "created_at": 1770845000000,
-            "statuses": [
-                {
-                    "created_at": 1770845000500,
-                    "name": "RECEIVED",
-                    "origin": "STORE"
-                }
-            ],
-            "customer": {
-                "temporary_phone": "+556196665555",
-                "name": "Roberto Almeida"
-            },
-            "delivery_address": {
-                "reference": "Edifício Office Tower",
-                "street_name": "SCN Quadra 2",
-                "postal_code": "70.712-900",
-                "country": "BR",
-                "city": "Brasília",
-                "neighborhood": "Asa Norte",
-                "street_number": "Sala 404",
-                "state": "Distrito Federal",
-                "coordinates": {
-                    "longitude": -47.885,
-                    "latitude": -15.79,
-                    "id": 1323180
-                }
-            }
+      ],
+      "customer": {
+        "temporary_phone": "+556199998888",
+        "name": "Ana Clara Silva"
+      },
+      "delivery_address": {
+        "reference": "Portão A",
+        "street_name": "Rua das Pitangueiras",
+        "postal_code": "71.900-100",
+        "country": "BR",
+        "city": "Brasília",
+        "neighborhood": "Águas Claras",
+        "street_number": "1050",
+        "state": "Distrito Federal",
+        "coordinates": {
+          "longitude": -48.025,
+          "latitude": -15.835,
+          "id": 1323150
         }
+      }
     }
+  },
+  {
+    "store_id": "98765432-abcd-ef00-1234-567890abcdef",
+    "order_id": "1c92bc9f-6de2-4d24-9d1c-e3271e8bb998",
+    "order": {
+      "payments": [
+        {
+          "prepaid": true,
+          "value": 54,
+          "origin": "PIX"
+        }
+      ],
+      "last_status_name": "CANCELED",
+      "store": {
+        "name": "COCO BAMBU CHIQUE CHIQUE",
+        "id": "98765432-abcd-ef00-1234-567890abcdef"
+      },
+      "total_price": 54,
+      "items": [
+        {
+          "code": 105,
+          "price": 54,
+          "observations": null,
+          "total_price": 54,
+          "name": "Camarao Delicia",
+          "quantity": 1,
+          "discount": 0,
+          "condiments": []
+        }
+      ],
+      "created_at": 1770843000000,
+      "statuses": [
+        {
+          "created_at": 1770843000500,
+          "name": "RECEIVED",
+          "origin": "STORE"
+        },
+        {
+          "created_at": 1770843200000,
+          "name": "CANCELED",
+          "origin": "STORE"
+        }
+      ],
+      "customer": {
+        "temporary_phone": "+556198887777",
+        "name": "Carlos Eduardo Souza"
+      },
+      "delivery_address": {
+        "reference": "Ao lado da padaria",
+        "street_name": "SQN 202",
+        "postal_code": "70.832-000",
+        "country": "BR",
+        "city": "Brasília",
+        "neighborhood": "Asa Norte",
+        "street_number": "Bloco B",
+        "state": "Distrito Federal",
+        "coordinates": {
+          "longitude": -47.88,
+          "latitude": -15.78,
+          "id": 1323160
+        }
+      }
+    }
+  },
+  {
+    "store_id": "f052054c-e0a0-4768-ab55-7cb7ead57371",
+    "order_id": "293890c2-82a9-4f4f-b55e-7cb45c69e1e5",
+    "order": {
+      "payments": [
+        {
+          "prepaid": true,
+          "value": 250.5,
+          "origin": "VR"
+        }
+      ],
+      "last_status_name": "DISPATCHED",
+      "store": {
+        "name": "Coco Bambu Loja Teste",
+        "id": "f052054c-e0a0-4768-ab55-7cb7ead57371"
+      },
+      "total_price": 250.5,
+      "items": [
+        {
+          "code": 5001,
+          "price": 250.5,
+          "observations": null,
+          "total_price": 250.5,
+          "name": "Camarão Internacional (Serve 4)",
+          "quantity": 1,
+          "discount": 0,
+          "condiments": []
+        }
+      ],
+      "created_at": 1770835000000,
+      "statuses": [
+        {
+          "created_at": 1770835000500,
+          "name": "RECEIVED",
+          "origin": "STORE"
+        },
+        {
+          "created_at": 1770835100000,
+          "name": "CONFIRMED",
+          "origin": "STORE"
+        },
+        {
+          "created_at": 1770838000000,
+          "name": "DISPATCHED",
+          "origin": "STORE"
+        }
+      ],
+      "customer": {
+        "temporary_phone": "+556197776666",
+        "name": "Fernanda Lima"
+      },
+      "delivery_address": {
+        "reference": "Casa Amarela",
+        "street_name": "SHIS QI 05",
+        "postal_code": "71.615-000",
+        "country": "BR",
+        "city": "Brasília",
+        "neighborhood": "Lago Sul",
+        "street_number": "Conjunto 9",
+        "state": "Distrito Federal",
+        "coordinates": {
+          "longitude": -47.9,
+          "latitude": -15.85,
+          "id": 1323170
+        }
+      }
+    }
+  },
+  {
+    "store_id": "98765432-abcd-ef00-1234-567890abcdef",
+    "order_id": "e39deb10-d73a-4438-a0b8-0a2985785094",
+    "order": {
+      "payments": [
+        {
+          "prepaid": false,
+          "value": 35.9,
+          "origin": "CASH"
+        }
+      ],
+      "last_status_name": "RECEIVED",
+      "store": {
+        "name": "COCO BAMBU CHIQUE CHIQUE",
+        "id": "98765432-abcd-ef00-1234-567890abcdef"
+      },
+      "total_price": 35.9,
+      "items": [
+        {
+          "code": 202,
+          "price": 35.9,
+          "observations": null,
+          "total_price": 35.9,
+          "name": "Batata Frita Especial",
+          "quantity": 1,
+          "discount": 0,
+          "condiments": []
+        }
+      ],
+      "created_at": 1770845000000,
+      "statuses": [
+        {
+          "created_at": 1770845000500,
+          "name": "RECEIVED",
+          "origin": "STORE"
+        }
+      ],
+      "customer": {
+        "temporary_phone": "+556196665555",
+        "name": "Roberto Almeida"
+      },
+      "delivery_address": {
+        "reference": "Edifício Office Tower",
+        "street_name": "SCN Quadra 2",
+        "postal_code": "70.712-900",
+        "country": "BR",
+        "city": "Brasília",
+        "neighborhood": "Asa Norte",
+        "street_number": "Sala 404",
+        "state": "Distrito Federal",
+        "coordinates": {
+          "longitude": -47.885,
+          "latitude": -15.79,
+          "id": 1323180
+        }
+      }
+    }
+  },
+  {
+    "store_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "order_id": "0d6bc08d-029c-4c8a-b525-509c82896c86",
+    "order": {
+      "payments": [
+        {
+          "prepaid": true,
+          "value": 176.79,
+          "origin": "PIX"
+        }
+      ],
+      "last_status_name": "RECEIVED",
+      "store": {
+        "name": "COCO BAMBU CHIQUE CHIQUE",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      },
+      "total_price": 176.79,
+      "items": [
+        {
+          "code": 20,
+          "price": 176.79,
+          "observations": "gosto de azeitona",
+          "total_price": 176.79,
+          "name": "batata frita",
+          "quantity": 1,
+          "discount": 0,
+          "condiments": []
+        }
+      ],
+      "created_at": 1771528899666,
+      "statuses": [
+        {
+          "name": "DRAFT",
+          "created_at": 1771528899666,
+          "origin": "CUSTOMER"
+        },
+        {
+          "name": "RECEIVED",
+          "created_at": 1771531888230,
+          "origin": "CUSTOMER"
+        }
+      ],
+      "customer": {
+        "temporary_phone": "61995826232",
+        "name": "pedro"
+      },
+      "delivery_address": {
+        "street_name": "Setor O",
+        "street_number": "20",
+        "city": "Ceilandia Norte",
+        "state": "Distrito Federal",
+        "postal_code": "71.710-000",
+        "country": "BR",
+        "neighborhood": "Ceilandia Norte",
+        "reference": "Edifício Office Tower",
+        "coordinates": null
+      }
+    }
+  }
 ]

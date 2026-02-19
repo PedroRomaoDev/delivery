@@ -1,6 +1,6 @@
 # Desafio CBLab
 
-API de gerenciamento de pedidos para serviços de delivery, desenvolvida com **Domain-Driven Design (DDD)** e **Clean Architecture**. Inclui **geocoding automático** de endereços (cálculo de coordenadas a partir de endereço e CEP via OpenStreetMap Nominatim), validação de dados com Zod, 335 testes automatizados, documentação Swagger interativa para visualização dos dados e containerização Docker com segurança (non-root execution). Arquitetura modular em monorepo com workspaces pnpm.
+Sistema completo de gerenciamento de pedidos para serviços de delivery, composto por **API REST** (Fastify) e **Dashboard Web** (React). A API foi desenvolvida com **Domain-Driven Design (DDD)** e **Clean Architecture**, incluindo **geocoding automático** de endereços (cálculo de coordenadas via OpenStreetMap Nominatim), validação com Zod e 335 testes automatizados. O frontend oferece visualização interativa com estatísticas, gráficos de status e tabela de pedidos recentes, utilizando **TanStack Query** para gerenciamento de estado do servidor. Containerização Docker completa com Nginx (frontend) e Node.js (backend), execução não-root para segurança. Arquitetura modular em monorepo com workspaces pnpm.
 
 ## Índice
 
@@ -13,6 +13,7 @@ API de gerenciamento de pedidos para serviços de delivery, desenvolvida com **D
 - [Instalação](#instalação)
 - [Execução](#execução)
 - [Docker](#docker)
+- [Frontend - Dashboard](#frontend---dashboard)
 - [Testes](#testes)
 - [Documentação da API](#documentação-da-api)
 - [Padrões de Desenvolvimento](#padrões-de-desenvolvimento)
@@ -96,11 +97,22 @@ DRAFT → RECEIVED → CONFIRMED → DISPATCHED → DELIVERED
 
 ## Tecnologias
 
-### Core
+### Backend (API)
 
-- **Node.js**: Runtime JavaScript
+- **Node.js 20**: Runtime JavaScript
 - **Fastify**: Framework web de alta performance
-- **Zod**: Validação de esquemas
+- **Zod**: Validação de esquemas e tipos
+
+### Frontend (Dashboard)
+
+- **React 18.2**: Library UI com componentes funcionais
+- **Vite**: Build tool e dev server de alta performance
+- **TailwindCSS 3.4**: Framework CSS utility-first com cores customizadas (Coco Bambu)
+- **React Router DOM 6.25**: Roteamento client-side
+- **TanStack Query 5.90**: Gerenciamento de estado do servidor (cache, loading, refetch)
+- **Axios 1.13**: Cliente HTTP
+- **Recharts 3.7**: Biblioteca de gráficos (pie chart, bar chart)
+- **tailwind-variants**: Variantes de componentes com TypeScript support
 
 ### Monorepo
 
@@ -161,10 +173,10 @@ O projeto utiliza **pnpm workspaces** para gerenciar múltiplos packages e aplic
 
 ### Workspaces Disponíveis
 
-- **@delivery/api** (`apps/api`): API REST principal
-- **@delivery/web** (`apps/web`): Frontend (futuro)
+- **@delivery/api** (`apps/api`): API REST principal (Fastify + DDD)
+- **@delivery/web** (`apps/web`): Dashboard Web (React + Vite + TanStack Query)
 - **@delivery/helpers** (`packages/helpers`): Utilitários compartilhados
-- **@delivery/shared** (`packages/shared`): Schemas e codigos compartilhados
+- **@delivery/shared** (`packages/shared`): Schemas Zod e código compartilhado
 
 ## Estrutura do Projeto
 
@@ -184,9 +196,35 @@ delivery/
 │   │   │   ├── config/         # Configurações
 │   │   │   └── data/           # Dados (orders)
 │   │   ├── api-server.js       # Entry point
+│   │   ├── Dockerfile          # Container API
 │   │   └── package.json
 │   │
-│   └── web/                    # Frontend (futuro)
+│   └── web/                    # Frontend Dashboard (React + Vite)
+│       ├── src/
+│       │   ├── components/     # Componentes React
+│       │   │   ├── SideBar.jsx           # Navegação principal
+│       │   │   ├── DashboardCards.jsx    # Cards de estatísticas
+│       │   │   ├── RecentOrdersTable.jsx # Tabela de pedidos
+│       │   │   └── OrderStatusChart.jsx  # Gráfico de status
+│       │   ├── pages/          # Páginas/Rotas
+│       │   │   ├── HomePage.jsx          # Dashboard principal
+│       │   │   ├── OrdersPage.jsx        # Lista todos os pedidos
+│       │   │   ├── NewOrderPage.jsx      # Criar novo pedido
+│       │   │   ├── ActiveOrdersPage.jsx  # Pedidos ativos
+│       │   │   └── OrderHistoryPage.jsx  # Histórico
+│       │   ├── hooks/          # Custom Hooks
+│       │   │   └── data/
+│       │   │       ├── use-get-orders.js
+│       │   │       └── use-get-order.js
+│       │   ├── lib/            # Configurações
+│       │   │   └── axios.js    # Cliente HTTP
+│       │   ├── keys/           # Query Keys (TanStack Query)
+│       │   │   └── queries.js
+│       │   ├── assets/         # Ícones e imagens
+│       │   └── main.jsx        # Entry point
+│       ├── Dockerfile          # Container Nginx
+│       ├── nginx.conf          # Config Nginx
+│       └── package.json
 │
 ├── packages/
 │   ├── helpers/                # Utilitários compartilhados
@@ -232,15 +270,34 @@ pnpm install
 
 ## Execução
 
+### Desenvolvimento Local
+
+#### API Backend
+
 ```bash
-# Executar API Localmente
+# Na raiz do projeto ou em apps/api
 cd apps/api
 pnpm dev
 ```
 
-A API estará disponível em: `http://localhost:8080`
+A API estará disponível em:
 
-Interface Swagger UI: `http://localhost:8080/docs`
+- **API**: `http://localhost:8080`
+- **Swagger UI**: `http://localhost:8080/docs`
+
+#### Frontend Dashboard
+
+```bash
+# Na raiz do projeto ou em apps/web
+cd apps/web
+pnpm dev
+```
+
+O Dashboard estará disponível em:
+
+- **Frontend**: `http://localhost:5173`
+
+> **Nota**: O frontend precisa que a API esteja rodando para funcionar corretamente.
 
 ## Docker
 
@@ -260,24 +317,76 @@ pnpm run docker:build
 pnpm run docker:up
 ```
 
-A API estará disponível em:
+Os serviços estarão disponíveis em:
 
+- **Frontend**: `http://localhost:3000`
 - **API**: `http://localhost:8080`
 - **Swagger UI**: `http://localhost:8080/docs`
 
 ### Scripts Disponíveis
 
 ```bash
-pnpm run docker:build      # Build da imagem
-pnpm run docker:up         # Iniciar container
-pnpm run docker:down       # Parar container
-pnpm run docker:logs       # Ver logs
-pnpm run docker:rebuild    # Rebuild completo
+pnpm run docker:build      # Build das imagens (api + web)
+pnpm run docker:up         # Iniciar containers
+pnpm run docker:down       # Parar containers
+pnpm run docker:logs       # Ver logs de ambos os serviços
+pnpm run docker:rebuild    # Rebuild completo (--no-cache)
 ```
+
+### Arquitetura Docker
+
+- **delivery-api**: Container Node.js 20 Alpine (execução não-root)
+- **delivery-web**: Container Nginx Alpine com build multi-stage
+    - Stage 1: Build com Vite (Node 20 Alpine)
+    - Stage 2: Nginx servindo arquivos estáticos + reverse proxy para API
+    - Configuração de SPA routing (React Router)
+    - Proxy `/api` → `http://api:8080` (sem CORS)
+
+````
+
+## Frontend - Dashboard
+
+### Funcionalidades Implementadas
+
+#### Dashboard Principal (`/`)
+
+**Cartões de Estatísticas:**
+- Total de Pedidos
+- Rascunhos (DRAFT)
+- Pedidos Ativos (RECEIVED, CONFIRMED, DISPATCHED)
+- Entregues (DELIVERED)
+- Cancelados (CANCELED)
+
+**Visualizações:**
+- **Tabela de Pedidos Recentes**: Últimos 10 pedidos com status colorido
+- **Gráfico de Distribuição**: Pie chart com distribuição por status (Recharts)
+
+#### 🧭 Navegação Lateral (Sidebar)
+
+- **Dashboard**: Tela principal com estatísticas
+- **Todos os Pedidos**: Lista completa de pedidos (em desenvolvimento)
+- **Novo Pedido**: Formulário de criação (em desenvolvimento)
+- **Pedidos Ativos**: Filtro de pedidos em andamento (em desenvolvimento)
+- **Histórico**: Pedidos entregues e cancelados (em desenvolvimento)
+
+### Arquitetura Frontend
+
+**Padrões Implementados:**
+- **TanStack Query**: Gerenciamento de estado do servidor com cache automático
+- **Custom Hooks**: `useGetOrders`, `useGetOrder` para data fetching
+- **Query Keys**: Organização centralizada de cache keys
+- **Component Composition**: Componentes reutilizáveis e isolados
+- **React Router**: Roteamento client-side com 5 rotas
+
+**Performance:**
+- Vite para build otimizado
+- Code splitting automático
+- Lazy loading de rotas
+- Cache de queries com TanStack Query
 
 ## Testes
 
-O projeto possui **cobertura completa de testes** com 335 testes automatizados distribuídos em 37 suítes:
+O projeto possui **cobertura completa de testes no backend** com 335 testes automatizados distribuídos em 37 suítes:
 
 ```bash
 # Executar todos os testes da API
@@ -286,7 +395,7 @@ pnpm test
 
 # Executar testes com cobertura
 pnpm test -- --coverage
-```
+````
 
 ### Estrutura de Testes
 
@@ -376,7 +485,7 @@ O projeto utiliza **Husky** e **lint-staged** para garantir qualidade:
 
 ## Contato
 
-Para dúvidas ou sugestões relacionadas ao projeto, consulte a [especificação completa](docs/order-api-specification.md).
+Para dúvidas relacionadas ao projeto, consulte a [especificação completa](docs/order-api-specification.md).
 
 ---
 
