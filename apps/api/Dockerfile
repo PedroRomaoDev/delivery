@@ -1,50 +1,50 @@
-# Build stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
-# Install pnpm
+RUN apk update && apk upgrade --no-cache
+
 RUN npm install -g pnpm@10.20.0
 
-# Set working directory
 WORKDIR /app
 
-# Copy workspace files
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Copy all workspace packages
 COPY packages ./packages
 COPY apps/api ./apps/api
 
-# Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Production stage
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
-# Install pnpm and curl for healthcheck
-RUN npm install -g pnpm@10.20.0 && \
-    apk add --no-cache curl
+RUN apk update && \
+    apk upgrade --no-cache && \
+    apk add --no-cache curl && \
+    rm -rf /var/cache/apk/*
 
-# Set working directory
+RUN npm install -g pnpm@10.20.0
+
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
 WORKDIR /app
 
-# Copy workspace configuration
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Copy workspace packages
 COPY packages ./packages
 COPY apps/api ./apps/api
 
-# Install only production dependencies (skip scripts like husky prepare)
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
-# Set working directory to API
+RUN chown -R nodejs:nodejs /app
+
+USER nodejs
+
 WORKDIR /app/apps/api
 
-# Expose port
 EXPOSE 8080
 
-# Set NODE_ENV
 ENV NODE_ENV=production
 
-# Start application
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8080 || exit 1
+
 CMD ["node", "api-server.js"]

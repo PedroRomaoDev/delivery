@@ -1,6 +1,6 @@
 # Desafio CBLab
 
-Sistema de gerenciamento de pedidos para serviços de delivery, desenvolvido seguindo os princípios de **Domain-Driven Design (DDD)** e **Clean Architecture**.
+API de gerenciamento de pedidos para serviços de delivery, desenvolvida com **Domain-Driven Design (DDD)** e **Clean Architecture**. Inclui **geocoding automático** de endereços (cálculo de coordenadas a partir de endereço e CEP via OpenStreetMap Nominatim), validação de dados com Zod, 335 testes automatizados, documentação Swagger interativa para visualização dos dados e containerização Docker com segurança (non-root execution). Arquitetura modular em monorepo com workspaces pnpm.
 
 ## Índice
 
@@ -129,17 +129,22 @@ DRAFT → RECEIVED → CONFIRMED → DISPATCHED → DELIVERED
     - Integrado com ESLint via lint-staged
 - **EditorConfig**: Padronização de editores
     - Configuração: `.editorconfig`
-
-### Containerização
-
-- **Docker**: Containerização da aplicação
-- **Docker Compose**: Orquestração de containers
     - Indentação, encoding, line endings
 - **Husky**: Git hooks automatizados
     - Pre-commit: lint-staged
 - **lint-staged**: Linting incremental
     - ESLint --fix em arquivos .js
     - Prettier --write em todos os arquivos
+
+### Containerização
+
+- **Docker**: Containerização da aplicação com build multi-stage
+    - Node.js 20 Alpine (imagem base segura e atualizada)
+    - Execução como usuário não-root
+    - Health checks integrados
+- **Docker Compose**: Orquestração de containers
+    - Health monitoring
+    - Restart automático
 
 ## Gerenciamento de Monorepo
 
@@ -227,25 +232,15 @@ pnpm install
 
 ## Execução
 
-### Desenvolvimento
-
 ```bash
-# Executar API no container Docker
+# Executar API Localmente
 cd apps/api
-pnpm run dev
+pnpm dev
 ```
 
 A API estará disponível em: `http://localhost:8080`
 
 Interface Swagger UI: `http://localhost:8080/docs`
-
-### Produção
-
-```bash
-# Executar API em modo produção
-cd apps/api
-node api-server.js
-```
 
 ## Docker
 
@@ -261,6 +256,7 @@ docker-compose build
 docker-compose up -d
 
 # Ou usando npm scripts
+pnpm run docker:build
 pnpm run docker:up
 ```
 
