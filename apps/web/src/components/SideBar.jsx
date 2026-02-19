@@ -9,7 +9,7 @@ import SidebarButton from './SidebarButton';
 
 const Sidebar = () => {
     return (
-        <div className="h-screen w-72 min-w-72 bg-brand-dark-green shadow-lg">
+        <div className="min-h-screen w-72 min-w-72 bg-brand-dark-green shadow-lg">
             <div className="space-y-4 px-8 py-6 border-b border-brand-gold border-opacity-30">
                 <h1 className="text-xl font-semibold text-brand-gold">
                     CBLab Delivery
@@ -23,11 +23,11 @@ const Sidebar = () => {
             </div>
 
             <div className="flex flex-col gap-2 p-2">
-                <SidebarButton to="/">
+                <SidebarButton to="/" end>
                     <HomeIcon />
                     Dashboard
                 </SidebarButton>
-                <SidebarButton to="/orders">
+                <SidebarButton to="/orders" end>
                     <PackageIcon />
                     Todos os Pedidos
                 </SidebarButton>

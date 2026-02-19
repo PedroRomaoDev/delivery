@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { tv } from 'tailwind-variants';
 
-const SidebarButton = ({ children, to }) => {
+const SidebarButton = ({ children, to, end = false }) => {
     const sidebar = tv({
         base: 'flex items-center gap-2 rounded-lg px-6 py-3 transition-all duration-200',
         variants: {
@@ -18,6 +18,7 @@ const SidebarButton = ({ children, to }) => {
     return (
         <NavLink
             to={to}
+            end={end}
             className={({ isActive }) =>
                 sidebar({ color: isActive ? 'selected' : 'unselected' })
             }
@@ -29,6 +30,8 @@ const SidebarButton = ({ children, to }) => {
 
 SidebarButton.propTypes = {
     children: PropTypes.node.isRequired,
+    to: PropTypes.string.isRequired,
+    end: PropTypes.bool,
     // node: qualquer coisa que pode ser renderizada, como texto, número, elemento React, etc.
 };
 
