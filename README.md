@@ -344,46 +344,6 @@ pnpm run docker:rebuild    # Rebuild completo (--no-cache)
 
 ````
 
-## Frontend - Dashboard
-
-### Funcionalidades Implementadas
-
-#### Dashboard Principal (`/`)
-
-**Cartões de Estatísticas:**
-- Total de Pedidos
-- Rascunhos (DRAFT)
-- Pedidos Ativos (RECEIVED, CONFIRMED, DISPATCHED)
-- Entregues (DELIVERED)
-- Cancelados (CANCELED)
-
-**Visualizações:**
-- **Tabela de Pedidos Recentes**: Últimos 10 pedidos com status colorido
-- **Gráfico de Distribuição**: Pie chart com distribuição por status (Recharts)
-
-#### 🧭 Navegação Lateral (Sidebar)
-
-- **Dashboard**: Tela principal com estatísticas
-- **Todos os Pedidos**: Lista completa de pedidos (em desenvolvimento)
-- **Novo Pedido**: Formulário de criação (em desenvolvimento)
-- **Pedidos Ativos**: Filtro de pedidos em andamento (em desenvolvimento)
-- **Histórico**: Pedidos entregues e cancelados (em desenvolvimento)
-
-### Arquitetura Frontend
-
-**Padrões Implementados:**
-- **TanStack Query**: Gerenciamento de estado do servidor com cache automático
-- **Custom Hooks**: `useGetOrders`, `useGetOrder` para data fetching
-- **Query Keys**: Organização centralizada de cache keys
-- **Component Composition**: Componentes reutilizáveis e isolados
-- **React Router**: Roteamento client-side com 5 rotas
-
-**Performance:**
-- Vite para build otimizado
-- Code splitting automático
-- Lazy loading de rotas
-- Cache de queries com TanStack Query
-
 ## Testes
 
 O projeto possui **cobertura completa de testes no backend** com 335 testes automatizados distribuídos em 37 suítes:
@@ -420,7 +380,7 @@ Cada camada possui seus próprios testes:
 
 A documentação completa da API está disponível em:
 
-- **Swagger UI**: `http://localhost:3000/docs` (quando a API estiver rodando)
+- **Swagger UI**: `http://localhost:8080/docs` (quando a API estiver rodando)
 - **Especificação**: [docs/order-api-specification.md](docs/order-api-specification.md)
 
 ### Principais Endpoints
